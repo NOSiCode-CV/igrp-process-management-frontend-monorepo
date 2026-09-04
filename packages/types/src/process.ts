@@ -132,6 +132,13 @@ export interface StartProcessInstanceRequest {
   assignmentRules?: ProcessTaskAssignmentRuleRequest[];
 }
 
+/**
+ * CancelProcessInstanceDTO — POST /process-instances/{id}/cancel
+ */
+export interface CancelProcessInstanceRequest {
+  obsCancel?: string;
+}
+
 /** ProcessArtifactRequestDTO (+ key for client path helper) */
 export interface CreateProcessArtifactRequest {
   name: string;

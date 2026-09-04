@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@igrp/platform-process-management-client-ts": "workspace:*",
-    "@igrp/platform-process-management-types": "workspace:*",
+    "@igrp/platform-process-management-types": "0.1.0-beta.21",
     "clsx": "^2.0.0",
     "lucide-react": "^0.294.0",
     "next": "^14.0.0",

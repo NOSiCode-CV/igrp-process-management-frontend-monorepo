@@ -13,6 +13,7 @@ import {
   PaginatedResponse,
   VariableParams,
   StartProcessInstanceRequest,
+  CancelProcessInstanceRequest,
   ProcessDefinitionSchema,
   Priority,
   TaskPriorityRequest,
@@ -165,6 +166,16 @@ export class ProcessClient extends BaseApiClient {
     id: string,
   ): Promise<ApiResponse<ProcessInstance>> {
     return this.get<ProcessInstance>(`/process-instances/${id}`);
+  }
+
+  /**
+   * POST /process-instances/{id}/cancel - Cancel a running process instance
+   */
+  async cancelProcessInstance(
+    id: string,
+    body?: CancelProcessInstanceRequest,
+  ): Promise<ApiResponse<ProcessInstance>> {
+    return this.post<ProcessInstance>(`/process-instances/${id}/cancel`, body);
   }
 
   /**

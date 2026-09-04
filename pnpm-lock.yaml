@@ -27,8 +27,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/client
       '@igrp/platform-process-management-types':
-        specifier: workspace:*
-        version: link:../../packages/types
+        specifier: 0.1.0-beta.21
+        version: 0.1.0-beta.21
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -79,8 +79,8 @@ importers:
   packages/client:
     dependencies:
       '@igrp/platform-process-management-types':
-        specifier: latest
-        version: 0.1.0-beta.20
+        specifier: 0.1.0-beta.21
+        version: 0.1.0-beta.21
     devDependencies:
       '@types/node':
         specifier: ^24.1.0
@@ -134,8 +134,8 @@ importers:
         specifier: latest
         version: 0.1.0-beta.20
       '@igrp/platform-process-management-types':
-        specifier: latest
-        version: 0.1.0-beta.20
+        specifier: 0.1.0-beta.21
+        version: 0.1.0-beta.21
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -824,8 +824,8 @@ packages:
   '@emnapi/core@1.7.1':
     resolution: {integrity: sha512-o1uhUASyo921r2XtHYOHy7gdkGLge8ghBEQHMWmyJFoXlpU58kIrhhN3w26lpQb6dspetweapMn2CSNwQ8I4wg==}
 
-  '@emnapi/runtime@1.11.2':
-    resolution: {integrity: sha512-kyOl3X0DuTiT1h2ft8r2fYO8JYtU9a9Xis/zBSiGArNaagCOWx90N1k2wxp18czFDH+OgcWGb5ZP/XMt3dcyPA==}
+  '@emnapi/runtime@1.11.3':
+    resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
 
   '@emnapi/runtime@1.7.1':
     resolution: {integrity: sha512-PVtJr5CmLwYAU9PZDMITZoR5iAOShYREoR45EyyLrbntV50mdePTgUn4AmOw90Ifcj+x2kRjdzr1HP3RrNiHGA==}
@@ -1049,8 +1049,8 @@ packages:
   '@igrp/platform-process-management-client-ts@0.1.0-beta.20':
     resolution: {integrity: sha512-czoEdiIHDp2/1jHJRc4Pl0t+/rXzwEoXs7qHFNzKc12HktdX5PR9diBy27klTMs7CpDccN9moZY8uNq8+MA1oQ==}
 
-  '@igrp/platform-process-management-types@0.1.0-beta.20':
-    resolution: {integrity: sha512-+L53QRg4myOo4YNMLqZnqBlOsrksBZ3zt9JPugbFXSXfrSzaJfHNa+dLB7SHm+Zp5MA9AFk/c42ovyrcD6C8wA==}
+  '@igrp/platform-process-management-types@0.1.0-beta.21':
+    resolution: {integrity: sha512-9y3pL/jCzGNaoTJ61ms2tBC10jdQiZ21PQ+3Vu9T12nJ85Po2BkK8D6Xosta379e7vZ1GXzufU0Ejcgyi0M7rg==}
     engines: {node: '>=20.x.x'}
 
   '@img/colour@1.1.0':
@@ -3145,8 +3145,8 @@ packages:
   caniuse-lite@1.0.30001760:
     resolution: {integrity: sha512-7AAMPcueWELt1p3mi13HR/LHH0TJLT11cnwDJEs3xA4+CK/PLKeO9Kl1oru24htkyUKtkGCvAx4ohB0Ttry8Dw==}
 
-  caniuse-lite@1.0.30001802:
-    resolution: {integrity: sha512-vmv8ub2xwTNmljSKf82mtCk5JH7hC+YgzLj3P5zotvA0tPQ9016tdNNOG8WRca1IxOnhSsivB+J0z5FeE5LOUw==}
+  caniuse-lite@1.0.30001810:
+    resolution: {integrity: sha512-TITQPUkaz+aVk5GL6NhOdwk1aEaNTSDPsGFWrTuhKGtjTF70jL/Oht2W4c6rXUe5fu7Ie19VIahAXHIIiWWNeg==}
 
   chai@4.5.0:
     resolution: {integrity: sha512-RITGBfijLkBddZvnn8jdqoTypxvqbOLYQkGGxXzeFjVHvudaPw0HNFD9x928/eUwYWd2dPCugVqspGALTZZQKw==}
@@ -6475,7 +6475,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@emnapi/runtime@1.11.2':
+  '@emnapi/runtime@1.11.3':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -6690,9 +6690,9 @@ snapshots:
 
   '@igrp/platform-process-management-client-ts@0.1.0-beta.20':
     dependencies:
-      '@igrp/platform-process-management-types': 0.1.0-beta.20
+      '@igrp/platform-process-management-types': 0.1.0-beta.21
 
-  '@igrp/platform-process-management-types@0.1.0-beta.20': {}
+  '@igrp/platform-process-management-types@0.1.0-beta.21': {}
 
   '@img/colour@1.1.0':
     optional: true
@@ -6779,7 +6779,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.34.5':
     dependencies:
-      '@emnapi/runtime': 1.11.2
+      '@emnapi/runtime': 1.11.3
     optional: true
 
   '@img/sharp-win32-arm64@0.34.5':
@@ -8613,7 +8613,7 @@ snapshots:
 
   caniuse-lite@1.0.30001760: {}
 
-  caniuse-lite@1.0.30001802: {}
+  caniuse-lite@1.0.30001810: {}
 
   chai@4.5.0:
     dependencies:
@@ -10105,7 +10105,7 @@ snapshots:
     dependencies:
       '@next/env': 15.5.10
       '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001802
+      caniuse-lite: 1.0.30001810
       postcss: 8.4.31
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
