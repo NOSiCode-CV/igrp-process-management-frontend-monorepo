@@ -1,17 +1,17 @@
 import {
   cn,
   IGRPButton,
-  IGRPButtonPrimitive,
-  IGRPCollapsibleContentPrimitive,
-  IGRPCollapsiblePrimitive,
-  IGRPCollapsibleTriggerPrimitive,
+  Button,
+  CollapsibleContent,
+  Collapsible,
+  CollapsibleTrigger,
   IGRPCopyTo,
-  IGRPDialogContentPrimitive,
-  IGRPDialogDescriptionPrimitive,
-  IGRPDialogFooterPrimitive,
-  IGRPDialogHeaderPrimitive,
-  IGRPDialogPrimitive,
-  IGRPDialogTitlePrimitive,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  Dialog,
+  DialogTitle,
   IGRPIcon,
 } from "@igrp/igrp-framework-react-design-system";
 import { useEffect } from "react";
@@ -90,8 +90,8 @@ export function IGRPConfirmationDialog({
   };
 
   return (
-    <IGRPDialogPrimitive open={open} onOpenChange={handleOpenChange}>
-      <IGRPDialogContentPrimitive
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
         className="w-full max-w-md overflow-hidden space-y-4"
         showCloseButton={dismissable}
         onEscapeKeyDown={(e) => {
@@ -122,21 +122,21 @@ export function IGRPConfirmationDialog({
               )}
             />
           </div>
-          <IGRPDialogHeaderPrimitive className="min-w-0 max-w-full">
-            <IGRPDialogTitlePrimitive className="text-center break-words">
+          <DialogHeader className="min-w-0 max-w-full">
+            <DialogTitle className="text-center break-words">
               {textHeader}
-            </IGRPDialogTitlePrimitive>
-            <IGRPDialogDescriptionPrimitive className="text-center break-words">
+            </DialogTitle>
+            <DialogDescription className="text-center break-words">
               {description}
-            </IGRPDialogDescriptionPrimitive>
-          </IGRPDialogHeaderPrimitive>
+            </DialogDescription>
+          </DialogHeader>
         </div>
         {message && (
-          <IGRPCollapsiblePrimitive
+          <Collapsible
             open={isMessageOpen}
             onOpenChange={setIsMessageOpen}
           >
-            <IGRPCollapsibleTriggerPrimitive asChild>
+            <CollapsibleTrigger asChild>
               <IGRPButton
                 variant="ghost"
                 className="w-full justify-center"
@@ -151,27 +151,27 @@ export function IGRPConfirmationDialog({
                   <IGRPIcon iconName="ChevronDown" />
                 )}
               </IGRPButton>
-            </IGRPCollapsibleTriggerPrimitive>
-            <IGRPCollapsibleContentPrimitive className="min-w-0 space-y-2">
+            </CollapsibleTrigger>
+            <CollapsibleContent className="min-w-0 space-y-2">
               <div className="flex min-w-0 items-start gap-2">
                 <pre className="min-w-0 flex-1 max-h-40 overflow-auto whitespace-pre-wrap break-all rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
                   {message}
                 </pre>
                 <IGRPCopyTo value={message} />
               </div>
-            </IGRPCollapsibleContentPrimitive>
-          </IGRPCollapsiblePrimitive>
+            </CollapsibleContent>
+          </Collapsible>
         )}
-        <IGRPDialogFooterPrimitive>
-          <IGRPButtonPrimitive
+        <DialogFooter>
+          <Button
             variant="default"
             onClick={() => confirmDelete()}
             className="w-full"
           >
             {labelBtnConfirm}
-          </IGRPButtonPrimitive>
-        </IGRPDialogFooterPrimitive>
-      </IGRPDialogContentPrimitive>
-    </IGRPDialogPrimitive>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

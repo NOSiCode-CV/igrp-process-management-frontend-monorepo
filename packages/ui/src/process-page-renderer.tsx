@@ -15,8 +15,8 @@ import {
   IGRPIcon,
   IGRPLoadingSpinner,
   IGRPStepperProcess,
-  IGRPCardPrimitive,
-  IGRPCardContentPrimitive,
+  Card,
+  CardContent,
   useIGRPToast,
 } from "@igrp/igrp-framework-react-design-system";
 import { ProcessDetailsCard } from "./components/process-details-card";
@@ -657,8 +657,8 @@ export default function IGRPProcessPageRenderer({
 
           if (!resolveStepComponent) {
             return (
-              <IGRPCardPrimitive>
-                <IGRPCardContentPrimitive>
+              <Card>
+                <CardContent>
                   <div className="flex flex-col items-center justify-center min-h-[120px] p-4 text-amber-600">
                     <p className="text-sm font-medium">
                       resolveStepComponent é obrigatório
@@ -668,8 +668,8 @@ export default function IGRPProcessPageRenderer({
                       dynamic import na app com prefixo estático).
                     </p>
                   </div>
-                </IGRPCardContentPrimitive>
-              </IGRPCardPrimitive>
+                </CardContent>
+              </Card>
             );
           }
 
@@ -681,8 +681,8 @@ export default function IGRPProcessPageRenderer({
             (taskCompleted || isActionPending) && !isConsultation;
 
           return (
-            <IGRPCardPrimitive>
-              <IGRPCardContentPrimitive
+            <Card>
+              <CardContent
                 className={
                   lockContent
                     ? "pointer-events-none select-none opacity-60"
@@ -705,8 +705,8 @@ export default function IGRPProcessPageRenderer({
                     <IGRPStepLoading userTaskKey={viewedStepKey || name} />
                   }
                 />
-              </IGRPCardContentPrimitive>
-            </IGRPCardPrimitive>
+              </CardContent>
+            </Card>
           );
         }}
       </IGRPStepperProcess>

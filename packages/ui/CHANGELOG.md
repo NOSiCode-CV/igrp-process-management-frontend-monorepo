@@ -4,6 +4,15 @@ Todas as alterações relevantes a este package são documentadas neste ficheiro
 
 ## Unreleased
 
+## 0.1.0-beta.57
+
+### Changed
+
+- Upgrade design-system to `0.1.0-beta.144` and notification-client-ts to
+  `0.2.0-beta.4`. Drop the removed `*Primitive` aliases: `igrp-confirmation-dialog`
+  and `process-page-renderer` now import the unprefixed primitives (`Dialog*`,
+  `Collapsible*`, `Card`/`CardContent`, `Button`).
+
 ## 0.1.0-beta.56
 
 ### Changed
