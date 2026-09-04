@@ -18,6 +18,15 @@ export const IGRP_TASK_NEXT_TEMPLATE_CODE = "igrp-task-next";
 export const IGRP_TASK_NEXT_TEMPLATE_LOCALE = "pt-CV";
 export const IGRP_TASK_NEXT_CATEGORY = "igrp-task-next";
 
+/**
+ * Default `applicationCode` for the task-next send when `IGRP_PROCESS_APP_CODE`
+ * is unset. In M2M the server ignores this field (it derives the app from the
+ * token's `application_code` claim), so it only affects the request payload and
+ * logs — hence a sensible constant default instead of a required env var. Set
+ * `IGRP_PROCESS_APP_CODE` to override if the AM application code differs.
+ */
+export const IGRP_PROCESS_MANAGEMENT_APP_CODE = "IGRP_PROCESS_MANAGEMENT";
+
 const LOG_PREFIX = "[igrp-task-next]";
 const CURRENT_STATUSES = new Set(["CURRENT", "ASSIGNED", "ACTIVE"]);
 
@@ -44,22 +53,32 @@ function isNotifyNextTaskEnabled(): boolean {
 /**
  * Config / access to the Notification Service (M2M).
  *
- * Required env (consumer app, e.g. INSS Core):
+ * The task-next notification is a Process Management feature, so it is sent
+ * under the **Process Management** application identity — NOT the consumer
+ * app (e.g. INSS Core). The M2M client below must be an Access Management
+ * client bound to the `IGRP_PROCESS_MANAGEMENT` application: its
+ * `client_credentials` token carries `application_code=IGRP_PROCESS_MANAGEMENT`,
+ * which is what the Notification Service uses to resolve templates AND to
+ * scope recipient/inbox tenancy. These are dedicated env vars (no fallback to
+ * the consumer's `IGRP_M2M_CLIENT_*` / `IGRP_APP_CODE`).
+ *
+ * Required env:
  * - NOTIFICATION_SERVICE_BASE_URL
- * - IGRP_M2M_CLIENT_ID / IGRP_M2M_CLIENT_SECRET
- * - IGRP_APP_CODE
+ * - IGRP_M2M_PROCESS_CLIENT_ID / IGRP_M2M_PROCESS_CLIENT_SECRET (Process Management client)
  * - IGRP_ACCESS_MANAGEMENT_API or IGRP_AUTH_ISSUER
+ *
+ * Optional env:
+ * - IGRP_PROCESS_APP_CODE (defaults to `IGRP_PROCESS_MANAGEMENT_APP_CODE`)
  */
 function hasNotificationAccess(): boolean {
   const hasNsUrl = Boolean(readEnv("NOTIFICATION_SERVICE_BASE_URL"));
   const hasM2m =
-    Boolean(readEnv("IGRP_M2M_CLIENT_ID")) &&
-    Boolean(readEnv("IGRP_M2M_CLIENT_SECRET"));
-  const hasAppCode = Boolean(readEnv("IGRP_APP_CODE"));
+    Boolean(readEnv("IGRP_M2M_PROCESS_CLIENT_ID")) &&
+    Boolean(readEnv("IGRP_M2M_PROCESS_CLIENT_SECRET"));
   const hasAuth =
     Boolean(readEnv("IGRP_ACCESS_MANAGEMENT_API")) ||
     Boolean(readEnv("IGRP_AUTH_ISSUER"));
-  return hasNsUrl && hasM2m && hasAppCode && hasAuth;
+  return hasNsUrl && hasM2m && hasAuth;
 }
 
 function delay(ms: number): Promise<void> {
@@ -163,8 +182,8 @@ function getM2MTokenProvider(): ClientCredentialsTokenProvider {
     readEnv("IGRP_ACCESS_MANAGEMENT_API") || readEnv("IGRP_AUTH_ISSUER");
   m2mTokenProvider = new ClientCredentialsTokenProvider(
     authBaseUrl,
-    readEnv("IGRP_M2M_CLIENT_ID"),
-    readEnv("IGRP_M2M_CLIENT_SECRET"),
+    readEnv("IGRP_M2M_PROCESS_CLIENT_ID"),
+    readEnv("IGRP_M2M_PROCESS_CLIENT_SECRET"),
   );
   return m2mTokenProvider;
 }
@@ -296,7 +315,8 @@ export async function notifyNextTaskInApp(
       return;
     }
 
-    const applicationCode = readEnv("IGRP_APP_CODE");
+    const applicationCode =
+      readEnv("IGRP_PROCESS_APP_CODE") || IGRP_PROCESS_MANAGEMENT_APP_CODE;
     const notificationClient = await getNotificationM2MClient();
     let sent = 0;
 

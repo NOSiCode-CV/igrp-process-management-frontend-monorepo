@@ -4,8 +4,19 @@ Todas as alterações relevantes a este package são documentadas neste ficheiro
 
 ## Unreleased
 
+## 0.1.0-beta.56
+
 ### Changed
 
+- IN_APP `igrp-task-next`: envio passa a usar a **identidade da app Process
+  Management**, não a da app consumidora. Novas env dedicadas
+  `IGRP_M2M_PROCESS_CLIENT_ID` / `IGRP_M2M_PROCESS_CLIENT_SECRET` (client M2M
+  do Access Management ligado a `IGRP_PROCESS_MANAGEMENT`), **sem fallback**
+  para `IGRP_M2M_CLIENT_*`. O token passa a trazer
+  `application_code=IGRP_PROCESS_MANAGEMENT`, que o NS usa para resolver o
+  template e para o scope de destinatários/inbox.
+- `applicationCode` do envio: nova env opcional `IGRP_PROCESS_APP_CODE`, com
+  fallback para a constante `IGRP_PROCESS_MANAGEMENT`.
 - IN_APP `igrp-task-next`: título da inbox é o nome da tarefa (`taskName`),
   enviado em `inline` para não usar o template genérico "Nova tarefa".
 

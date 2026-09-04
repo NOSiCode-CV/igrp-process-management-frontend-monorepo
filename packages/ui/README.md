@@ -207,18 +207,27 @@ stores them**. A Notification Service failure never fails the complete.
 env (M2M). The skip that ignored the completer when they own the next
 step is commented out.
 
-Consumer env (same names as INSS Core):
+Env (Process Management identity — **not** the consumer app):
 
-| Variable                                           | Role                                                |
-| -------------------------------------------------- | --------------------------------------------------- |
-| `IGRP_NOTIFY_NEXT_TASK`                            | default on; set `false` to disable                  |
-| `NOTIFICATION_SERVICE_BASE_URL`                    | Notification Service                                |
-| `IGRP_ACCESS_MANAGEMENT_API` or `IGRP_AUTH_ISSUER` | M2M token endpoint                                  |
-| `IGRP_M2M_CLIENT_ID` / `IGRP_M2M_CLIENT_SECRET`    | `client_credentials`                                |
-| `IGRP_APP_CODE`                                    | `applicationCode` on send (consumer app, e.g. CORE) |
-| `IGRP_SERVICE_ID`                                  | optional `X-Machine-Service-ID`                     |
+| Variable                                                        | Role                                                                       |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `IGRP_NOTIFY_NEXT_TASK`                                         | default on; set `false` to disable                                         |
+| `NOTIFICATION_SERVICE_BASE_URL`                                 | Notification Service                                                        |
+| `IGRP_ACCESS_MANAGEMENT_API` or `IGRP_AUTH_ISSUER`              | M2M token endpoint                                                          |
+| `IGRP_M2M_PROCESS_CLIENT_ID` / `IGRP_M2M_PROCESS_CLIENT_SECRET` | `client_credentials` of the **Process Management** AM client               |
+| `IGRP_PROCESS_APP_CODE`                                         | optional — `applicationCode` on send; defaults to `IGRP_PROCESS_MANAGEMENT` |
+| `IGRP_SERVICE_ID`                                               | optional `X-Machine-Service-ID`                                            |
 
-Template: IN_APP title is the **task name** (`inline.title`). Publish
-`igrp-task-next` (IN_APP, `pt-CV`) in Notifications UI only if you want a
-shared body; the send uses `inline` so the title is not a generic
-"Nova tarefa".
+The task-next notification is sent under the **Process Management**
+application identity, not the consumer app (e.g. INSS Core). The M2M client
+must be an Access Management client bound to `IGRP_PROCESS_MANAGEMENT`, so its
+token carries `application_code=IGRP_PROCESS_MANAGEMENT` — which is what the
+Notification Service uses to resolve the template **and** to scope recipient /
+inbox tenancy. These are dedicated vars with **no fallback** to the consumer's
+`IGRP_M2M_CLIENT_*` / `IGRP_APP_CODE`; if any is missing the send is skipped
+(best-effort, logged as a warning).
+
+Template: IN_APP title is the **task name** (`inline.title`). The send uses
+`inline`, so publishing `igrp-task-next` (IN_APP, `pt-CV`) is optional for now;
+switching to a published template is a later step once it is published under
+`IGRP_PROCESS_MANAGEMENT`.
