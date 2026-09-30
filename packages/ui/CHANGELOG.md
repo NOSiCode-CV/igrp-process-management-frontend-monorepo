@@ -4,6 +4,14 @@ Todas as alterações relevantes a este package são documentadas neste ficheiro
 
 ## Unreleased
 
+## 0.1.0-beta.59
+
+### Changed
+
+- Upgrade design-system to `0.2.0-beta.3`. The radix namespace type-leak from
+  0.2.0-beta.2 persists, so the `igrp-confirmation-dialog` Dialog prop re-types
+  remain in place.
+
 ## 0.1.0-beta.58
 
 ### Changed

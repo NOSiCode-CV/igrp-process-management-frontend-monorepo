@@ -87,7 +87,7 @@ importers:
         version: 24.10.4
       next-auth:
         specifier: ^4.24.0
-        version: 4.24.13(next@15.5.10(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       prettier:
         specifier: ^3.6.2
         version: 3.7.4
@@ -105,7 +105,7 @@ importers:
         version: 24.10.4
       next-auth:
         specifier: ^4.24.0
-        version: 4.24.13(next@15.5.10(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       prettier:
         specifier: ^3.6.2
         version: 3.7.4
@@ -125,8 +125,8 @@ importers:
         specifier: 0.1.0-beta.88
         version: 0.1.0-beta.88(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@igrp/igrp-framework-react-design-system':
-        specifier: 0.2.0-beta.2
-        version: 0.2.0-beta.2(@floating-ui/dom@1.7.5)(@tanstack/react-table@8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tiptap/extensions@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(date-fns@4.1.0)(lucide-react@0.564.0(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react-hook-form@7.71.1(react@19.2.4))(react@19.2.4)(recharts@2.15.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(zod@4.3.6)
+        specifier: 0.2.0-beta.3
+        version: 0.2.0-beta.3(@floating-ui/dom@1.7.5)(@sinclair/typebox@0.27.8)(@tanstack/react-table@8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tiptap/extensions@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(date-fns@4.1.0)(lucide-react@0.564.0(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react-hook-form@7.71.1(react@19.2.4))(react@19.2.4)(recharts@2.15.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(zod@4.3.6)
       '@igrp/platform-notification-client-ts':
         specifier: 0.2.0-beta.4
         version: 0.2.0-beta.4
@@ -1108,8 +1108,8 @@ packages:
     peerDependencies:
       next-auth: ^4.24.13
 
-  '@igrp/igrp-framework-react-design-system@0.2.0-beta.2':
-    resolution: {integrity: sha512-+8qRptimSfP+mbblwRYzfihIBLOYlv/YPu+55/Q13T5yFvjhsBiyikXYsQcoQHx5QvIZI9LNCqYdeU8nFc2PgQ==}
+  '@igrp/igrp-framework-react-design-system@0.2.0-beta.3':
+    resolution: {integrity: sha512-frgXIaGGTQKb2q1O80hlPJHmQlzY8ct25nWCGq7dqf0QjbAkbykbD/8sS8fd8sS/kV5NB+wGTTHM5yvg9Tp8Rw==}
     engines: {node: '>=22'}
     peerDependencies:
       '@tanstack/react-table': ^8.0.0
@@ -7007,11 +7007,12 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@hookform/resolvers@5.9.1(react-hook-form@7.71.1(react@19.2.4))(zod@4.3.6)':
+  '@hookform/resolvers@5.9.1(@sinclair/typebox@0.27.8)(react-hook-form@7.71.1(react@19.2.4))(zod@4.3.6)':
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.71.1(react@19.2.4)
     optionalDependencies:
+      '@sinclair/typebox': 0.27.8
       zod: 4.3.6
 
   '@humanwhocodes/config-array@0.13.0':
@@ -7040,9 +7041,9 @@ snapshots:
       - next
       - react
 
-  '@igrp/igrp-framework-react-design-system@0.2.0-beta.2(@floating-ui/dom@1.7.5)(@tanstack/react-table@8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tiptap/extensions@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(date-fns@4.1.0)(lucide-react@0.564.0(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react-hook-form@7.71.1(react@19.2.4))(react@19.2.4)(recharts@2.15.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(zod@4.3.6)':
+  '@igrp/igrp-framework-react-design-system@0.2.0-beta.3(@floating-ui/dom@1.7.5)(@sinclair/typebox@0.27.8)(@tanstack/react-table@8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tiptap/extensions@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(date-fns@4.1.0)(lucide-react@0.564.0(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react-hook-form@7.71.1(react@19.2.4))(react@19.2.4)(recharts@2.15.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(zod@4.3.6)':
     dependencies:
-      '@hookform/resolvers': 5.9.1(react-hook-form@7.71.1(react@19.2.4))(zod@4.3.6)
+      '@hookform/resolvers': 5.9.1(@sinclair/typebox@0.27.8)(react-hook-form@7.71.1(react@19.2.4))(zod@4.3.6)
       '@origin-space/image-cropper': 0.1.9(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tanstack/react-table': 8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tiptap/core': 3.31.3(@tiptap/pm@3.31.3)
@@ -10763,21 +10764,6 @@ snapshots:
   ncp@2.0.0: {}
 
   next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      '@babel/runtime': 7.28.4
-      '@panva/hkdf': 1.2.1
-      cookie: 0.7.2
-      jose: 4.15.9
-      next: 15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      oauth: 0.9.15
-      openid-client: 5.7.1
-      preact: 10.28.0
-      preact-render-to-string: 5.2.6(preact@10.28.0)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      uuid: 8.3.2
-
-  next-auth@4.24.13(next@15.5.10(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@babel/runtime': 7.28.4
       '@panva/hkdf': 1.2.1

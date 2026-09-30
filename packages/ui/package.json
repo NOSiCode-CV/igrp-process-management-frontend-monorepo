@@ -1,6 +1,6 @@
 {
   "name": "@igrp/platform-process-management-client-ui",
-  "version": "0.1.0-beta.58",
+  "version": "0.1.0-beta.59",
   "description": "IGRP Platform Process Management - Client UI",
   "keywords": [
     "igrp",
@@ -35,7 +35,7 @@
   "dependencies": {
     "@igrp/framework-next-auth": "0.1.0-beta.88",
     "@igrp/framework-next-types": "0.1.0-beta.88",
-    "@igrp/igrp-framework-react-design-system": "0.2.0-beta.2",
+    "@igrp/igrp-framework-react-design-system": "0.2.0-beta.3",
     "@igrp/platform-notification-client-ts": "0.2.0-beta.4",
     "@igrp/platform-process-management-client-ts": "latest",
     "@igrp/platform-process-management-types": "0.1.0-beta.21",
