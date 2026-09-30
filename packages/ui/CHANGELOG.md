@@ -4,6 +4,17 @@ Todas as alterações relevantes a este package são documentadas neste ficheiro
 
 ## Unreleased
 
+## 0.1.0-beta.58
+
+### Changed
+
+- Upgrade design-system to `0.2.0-beta.2`. It re-exports the Dialog primitives
+  from the unified `radix-ui` package, whose `ComponentProps<…>` types collapse
+  to no-props when this package is type-checked as a consumer. Re-type only the
+  Dialog props actually used in `igrp-confirmation-dialog` (runtime unchanged)
+  so the build stays green; remove once the DS stops leaking radix namespace
+  types across the package boundary.
+
 ## 0.1.0-beta.57
 
 ### Changed

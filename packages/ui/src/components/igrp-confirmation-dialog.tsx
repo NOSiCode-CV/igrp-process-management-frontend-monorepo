@@ -6,16 +6,50 @@ import {
   Collapsible,
   CollapsibleTrigger,
   IGRPCopyTo,
-  DialogContent,
-  DialogDescription,
+  DialogContent as DialogContentRaw,
+  DialogDescription as DialogDescriptionRaw,
   DialogFooter,
   DialogHeader,
-  Dialog,
-  DialogTitle,
+  Dialog as DialogRaw,
+  DialogTitle as DialogTitleRaw,
   IGRPIcon,
 } from "@igrp/igrp-framework-react-design-system";
+import type { ComponentType, ReactNode } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+
+/**
+ * design-system 0.2.x re-exports the Dialog primitives from the unified
+ * `radix-ui` package (`Dialog as reactDialog` → `@radix-ui/react-dialog`). Those
+ * `React.ComponentProps<typeof DialogPrimitive.Root|Content|...>` types collapse
+ * to no-props (`IntrinsicAttributes`) when this package is type-checked as a
+ * consumer, so the compiler rejects `open`/`onOpenChange`/`className`/the Radix
+ * dismissal handlers. The components are runtime-correct; re-type only the
+ * props we actually pass so the behaviour is preserved without a raw `any`.
+ * Remove these aliases once the design-system stops leaking radix namespace
+ * types across the package boundary.
+ */
+const Dialog = DialogRaw as unknown as ComponentType<{
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children?: ReactNode;
+}>;
+const DialogContent = DialogContentRaw as unknown as ComponentType<{
+  className?: string;
+  showCloseButton?: boolean;
+  onEscapeKeyDown?: (event: Event) => void;
+  onPointerDownOutside?: (event: Event) => void;
+  onInteractOutside?: (event: Event) => void;
+  children?: ReactNode;
+}>;
+const DialogTitle = DialogTitleRaw as unknown as ComponentType<{
+  className?: string;
+  children?: ReactNode;
+}>;
+const DialogDescription = DialogDescriptionRaw as unknown as ComponentType<{
+  className?: string;
+  children?: ReactNode;
+}>;
 
 export interface IGRPConfirmationDialogProps {
   open: boolean;
