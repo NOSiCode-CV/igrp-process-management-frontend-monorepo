@@ -4,6 +4,13 @@ Todas as alterações relevantes a este package são documentadas neste ficheiro
 
 ## Unreleased
 
+## 0.1.0-beta.60
+
+### Changed
+
+- Upgrade `@igrp/framework-next-auth` and `@igrp/framework-next-types` to
+  `0.2.0-beta.4` (from `0.1.0-beta.88`).
+
 ## 0.1.0-beta.59
 
 ### Changed

@@ -119,11 +119,11 @@ importers:
   packages/ui:
     dependencies:
       '@igrp/framework-next-auth':
-        specifier: 0.1.0-beta.88
-        version: 0.1.0-beta.88(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        specifier: 0.2.0-beta.4
+        version: 0.2.0-beta.4(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@igrp/framework-next-types':
-        specifier: 0.1.0-beta.88
-        version: 0.1.0-beta.88(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        specifier: 0.2.0-beta.4
+        version: 0.2.0-beta.4(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@igrp/igrp-framework-react-design-system':
         specifier: 0.2.0-beta.3
         version: 0.2.0-beta.3(@floating-ui/dom@1.7.5)(@sinclair/typebox@0.27.8)(@tanstack/react-table@8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tiptap/extensions@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(date-fns@4.1.0)(lucide-react@0.564.0(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react-hook-form@7.71.1(react@19.2.4))(react@19.2.4)(recharts@2.15.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(zod@4.3.6)
@@ -1095,18 +1095,23 @@ packages:
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     deprecated: Use @eslint/object-schema instead
 
-  '@igrp/framework-next-auth@0.1.0-beta.88':
-    resolution: {integrity: sha512-E1ePriJVNlQEqZ1YRhAOyEKLlM1cac88JkRT3SC604sT8bMtKhvRdWVNGvQj7ot1xEr95XaSK0IleD/IwqGJBA==}
+  '@igrp/framework-next-auth@0.2.0-beta.4':
+    resolution: {integrity: sha512-1xEaJ7MdTZaG2KpdOtkyKMg1vTZBdSL/JRZfnxm1AwmWtr27UIx8V7DxXXzQMO7oCfq3t5VaeoZg5h+kzRCS1Q==}
+    engines: {node: '>=22'}
     peerDependencies:
-      next: ^15.5.9
-      next-auth: ^4.24.13
-      react: ^19.2.0
+      next: ^15.5.0
+      next-auth: ^4.24.0
+      react: ^19.0.0
 
-  '@igrp/framework-next-types@0.1.0-beta.88':
-    resolution: {integrity: sha512-Lh4NX/XjPKdEf3F5drmSKFGLwCAbWxxExPHQbnsL4x6W37VeHxjmcdgmFPLysevqFvt4UC+bfiS64k/MBG3lyQ==}
-    engines: {node: '>=20.x.x'}
+  '@igrp/framework-next-types@0.2.0-beta.4':
+    resolution: {integrity: sha512-BJ1gq05gLHzyHrZEIKMv3vtv3pcY3VVeqhuNr1mq7uYuj9irPPYCH9XBOPVZdBbSo50OOFuk3CxVN4cDf6shLw==}
+    engines: {node: '>=22'}
     peerDependencies:
-      next-auth: ^4.24.13
+      next-auth: ^4.24.0
+      react: ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@igrp/igrp-framework-react-design-system@0.2.0-beta.3':
     resolution: {integrity: sha512-frgXIaGGTQKb2q1O80hlPJHmQlzY8ct25nWCGq7dqf0QjbAkbykbD/8sS8fd8sS/kV5NB+wGTTHM5yvg9Tp8Rw==}
@@ -7027,19 +7032,20 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.3': {}
 
-  '@igrp/framework-next-auth@0.1.0-beta.88(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
+  '@igrp/framework-next-auth@0.2.0-beta.4(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
     dependencies:
       next: 15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next-auth: 4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
 
-  '@igrp/framework-next-types@0.1.0-beta.88(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
+  '@igrp/framework-next-types@0.2.0-beta.4(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@igrp/framework-next-auth': 0.1.0-beta.88(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+      '@igrp/framework-next-auth': 0.2.0-beta.4(next-auth@4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       next-auth: 4.24.13(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+    optionalDependencies:
+      react: 19.2.4
     transitivePeerDependencies:
       - next
-      - react
 
   '@igrp/igrp-framework-react-design-system@0.2.0-beta.3(@floating-ui/dom@1.7.5)(@sinclair/typebox@0.27.8)(@tanstack/react-table@8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tiptap/extensions@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(date-fns@4.1.0)(lucide-react@0.564.0(react@19.2.4))(next@15.5.10(@babel/core@7.28.6)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react-hook-form@7.71.1(react@19.2.4))(react@19.2.4)(recharts@2.15.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(zod@4.3.6)':
     dependencies:
