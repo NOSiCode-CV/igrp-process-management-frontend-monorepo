@@ -209,14 +209,14 @@ step is commented out.
 
 Env (Process Management identity — **not** the consumer app):
 
-| Variable                                                        | Role                                                                       |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `IGRP_NOTIFY_NEXT_TASK`                                         | default on; set `false` to disable                                         |
+| Variable                                                        | Role                                                                        |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `IGRP_NOTIFY_NEXT_TASK`                                         | default on; set `false` to disable                                          |
 | `NOTIFICATION_SERVICE_BASE_URL`                                 | Notification Service                                                        |
 | `IGRP_ACCESS_MANAGEMENT_API` or `IGRP_AUTH_ISSUER`              | M2M token endpoint                                                          |
-| `IGRP_M2M_PROCESS_CLIENT_ID` / `IGRP_M2M_PROCESS_CLIENT_SECRET` | `client_credentials` of the **Process Management** AM client               |
+| `IGRP_M2M_PROCESS_CLIENT_ID` / `IGRP_M2M_PROCESS_CLIENT_SECRET` | `client_credentials` of the **Process Management** AM client                |
 | `IGRP_PROCESS_APP_CODE`                                         | optional — `applicationCode` on send; defaults to `IGRP_PROCESS_MANAGEMENT` |
-| `IGRP_SERVICE_ID`                                               | optional `X-Machine-Service-ID`                                            |
+| `IGRP_SERVICE_ID`                                               | optional `X-Machine-Service-ID`                                             |
 
 The task-next notification is sent under the **Process Management**
 application identity, not the consumer app (e.g. INSS Core). The M2M client

@@ -19,6 +19,16 @@ export {
 export type { FormKeyType, IGRPFormDiscovery } from "./lib/form-key-utils";
 
 export {
+  IGRPProcessError,
+  toProcessError,
+  toProcessErrorPayload,
+} from "./lib/process-error";
+export type {
+  IGRPProcessErrorCode,
+  IGRPProcessErrorPayload,
+} from "./lib/process-error";
+
+export {
   isProcessInstanceUuid,
   resolveProcessInstance,
 } from "./lib/resolve-process-instance";
@@ -43,9 +53,11 @@ export type { IGRPProcessManagementPage } from "./lib/process-management-app-url
 // Process actions (server actions – ficheiro tem "use server")
 export {
   fetchStepConfig,
+  fetchStepConfigSafe,
   callCompleteTask,
   callSaveTask,
 } from "./process-actions";
+export type { IGRPFetchStepConfigSafeResult } from "./process-actions";
 
 // Context & hook
 export {
@@ -62,3 +74,5 @@ export { IGRPProcessPage } from "./process-page";
 export { IGRPProcessPageRenderer } from "./process-page-renderer";
 export { IGRPConfirmationDialog } from "./components/igrp-confirmation-dialog";
 export type { IGRPConfirmationDialogProps } from "./components/igrp-confirmation-dialog";
+export { IGRPProcessViewState } from "./components/process-view-state";
+export type { IGRPProcessViewStateProps } from "./components/process-view-state";

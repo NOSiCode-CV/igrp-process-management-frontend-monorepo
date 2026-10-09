@@ -11,6 +11,10 @@ import { getIGRPProcessClient } from "./lib/api-client";
 import { formFromFormKey } from "./lib/form-key-utils";
 import { notifyNextTaskInApp } from "./lib/notify-next-task";
 import { resolveProcessInstance } from "./lib/resolve-process-instance";
+import {
+  type IGRPProcessErrorPayload,
+  toProcessErrorPayload,
+} from "./lib/process-error";
 
 export async function fetchStepConfig(
   params: IGRPStepConfigParams,
@@ -144,6 +148,30 @@ function toTaskDataPayload(
     variables: (variables ?? []).filter(keep),
     forms: (forms ?? []).filter(keep),
   };
+}
+
+export type IGRPFetchStepConfigSafeResult =
+  | { ok: true; data: StepConfigResult }
+  | { ok: false; error: IGRPProcessErrorPayload };
+
+/**
+ * Same as {@link fetchStepConfig} but never throws: failures come back as a
+ * serializable payload so the real reason (not found / no access) survives
+ * production builds, where Next.js redacts thrown server-action messages.
+ */
+export async function fetchStepConfigSafe(
+  params: IGRPStepConfigParams,
+  config: IGRPProcessClientConfig,
+): Promise<IGRPFetchStepConfigSafeResult> {
+  try {
+    return { ok: true, data: await fetchStepConfig(params, config) };
+  } catch (error) {
+    const payload = toProcessErrorPayload(error);
+    if (payload.code === "UNKNOWN") {
+      console.error("fetchStepConfig failed:", params.processInstanceId, error);
+    }
+    return { ok: false, error: payload };
+  }
 }
 
 export async function callCompleteTask(

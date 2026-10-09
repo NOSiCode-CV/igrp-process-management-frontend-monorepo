@@ -1,6 +1,6 @@
 {
   "name": "@igrp/platform-process-management-client-ui",
-  "version": "0.1.0-beta.60",
+  "version": "0.1.0-beta.61",
   "description": "IGRP Platform Process Management - Client UI",
   "keywords": [
     "igrp",
@@ -13,9 +13,9 @@
   "scripts": {
     "dev": "tsc --watch",
     "build": "pnpm build:reactcompiler",
-    "build:babel": "rimraf dist_optimized && babel dist --out-dir dist_optimized --source-maps --extensions .ts,.js,.tsx,.jsx,.cjs,.mjs && rimraf dist && move dist_optimized dist && cpy src/*.css dist/",
+    "build:babel": "rimraf dist_optimized && babel dist --out-dir dist_optimized --source-maps --extensions .ts,.js,.tsx,.jsx,.cjs,.mjs && rimraf dist && move dist_optimized dist && cpy src/*.css dist/ --flat",
     "build:reactcompiler": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm tailwind:build && pnpm build:swc && pnpm build:babel && pnpm build:types",
-    "build:swc": "swc ./src -d dist --config-file .swcrc --strip-leading-paths && cpy src/*.css dist/",
+    "build:swc": "swc ./src -d dist --config-file .swcrc --strip-leading-paths && cpy src/*.css dist/ --flat",
     "build:types": "tsc --emitDeclarationOnly --outDir dist/",
     "build:without_reactcompiler": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm build:types && pnpm build:swc",
     "clean": "pnpm clean:dist && pnpm clean:packages",

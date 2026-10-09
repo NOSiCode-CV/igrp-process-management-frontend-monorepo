@@ -166,10 +166,7 @@ export function IGRPConfirmationDialog({
           </DialogHeader>
         </div>
         {message && (
-          <Collapsible
-            open={isMessageOpen}
-            onOpenChange={setIsMessageOpen}
-          >
+          <Collapsible open={isMessageOpen} onOpenChange={setIsMessageOpen}>
             <CollapsibleTrigger asChild>
               <IGRPButton
                 variant="ghost"

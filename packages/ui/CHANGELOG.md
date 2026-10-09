@@ -4,6 +4,34 @@ Todas as alterações relevantes a este package são documentadas neste ficheiro
 
 ## Unreleased
 
+## 0.1.0-beta.61
+
+### Added
+
+- `IGRPProcessViewState`: estado vazio/erro do processo (não encontrado, sessão
+  expirada, sem acesso, erro inesperado com referência e "Tentar novamente").
+  Usado pelo `IGRPProcessPage` e exportado para reutilização nas apps.
+- `IGRPProcessError` (`code`: `NOT_FOUND` | `UNAUTHORIZED` | `FORBIDDEN` |
+  `UNKNOWN`) e helpers `toProcessError` / `toProcessErrorPayload`.
+- Server action `fetchStepConfigSafe`: devolve `{ ok, data | error }` em vez de
+  lançar, para que o motivo real sobreviva aos builds de produção (o Next.js
+  substitui a mensagem de qualquer erro lançado numa server action por
+  "An error occurred in the Server Components render…").
+
+### Changed
+
+- `useIGRPProcess` usa `fetchStepConfigSafe`; `stepConfigError` passa a ser
+  `IGRPProcessError | null` (subclasse de `Error`, compatível).
+- `resolveProcessInstance` lança `IGRPProcessError` `NOT_FOUND` quando o número
+  de processo não existe.
+- `styles.css` regenerado com as classes do novo componente.
+
+### Fixed
+
+- `cpy src/*.css dist/` (cpy-cli 6) copiava para `dist/src/`, por isso
+  `exports["./styles.css"]` / `["./css"]` apontavam para ficheiros
+  inexistentes. Passa a usar `--flat` → `dist/styles.css` e `dist/index.css`.
+
 ## 0.1.0-beta.60
 
 ### Changed
@@ -43,12 +71,12 @@ Todas as alterações relevantes a este package são documentadas neste ficheiro
 
 ### Changed
 
-- IN_APP `igrp-task-next`: envio passa a usar a **identidade da app Process
+- IN*APP `igrp-task-next`: envio passa a usar a **identidade da app Process
   Management**, não a da app consumidora. Novas env dedicadas
   `IGRP_M2M_PROCESS_CLIENT_ID` / `IGRP_M2M_PROCESS_CLIENT_SECRET` (client M2M
   do Access Management ligado a `IGRP_PROCESS_MANAGEMENT`), **sem fallback**
-  para `IGRP_M2M_CLIENT_*`. O token passa a trazer
-  `application_code=IGRP_PROCESS_MANAGEMENT`, que o NS usa para resolver o
+  para `IGRP_M2M_CLIENT*\*`. O token passa a trazer
+`application_code=IGRP_PROCESS_MANAGEMENT`, que o NS usa para resolver o
   template e para o scope de destinatários/inbox.
 - `applicationCode` do envio: nova env opcional `IGRP_PROCESS_APP_CODE`, com
   fallback para a constante `IGRP_PROCESS_MANAGEMENT`.

@@ -2,6 +2,7 @@
 import { IGRPLoadingSpinner } from "@igrp/igrp-framework-react-design-system";
 import { useIGRPProcessContext } from "./igrp-process-context";
 import { IGRPProcessPageRenderer } from "./process-page-renderer";
+import { IGRPProcessViewState } from "./components/process-view-state";
 
 function IGRPProcessPage() {
   const {
@@ -13,6 +14,7 @@ function IGRPProcessPage() {
     userTaskKey,
     userTaskInstanceId,
     mode,
+    fetchStepConfig,
   } = useIGRPProcessContext();
 
   // Pending (no data yet, no error) must look like loading — never the
@@ -30,24 +32,17 @@ function IGRPProcessPage() {
   }
 
   if (stepConfigError || !stepConfig) {
-    const message =
-      stepConfigError?.message ||
-      "Não foi possível carregar a configuração do processo.";
     return (
-      <div className="flex w-full flex-col items-center justify-center gap-2 py-16 px-4 text-center">
-        <p className="text-sm font-medium text-amber-600">
-          Erro ao carregar o processo
-        </p>
-        <p className="text-xs text-muted-foreground max-w-lg break-words">
-          {message}
-        </p>
-        {processInstanceId && (
-          <p className="text-xs text-muted-foreground/80 font-mono">
-            {processKey ? `${processKey} / ` : ""}
-            {processInstanceId}
-          </p>
-        )}
-      </div>
+      <IGRPProcessViewState
+        code={stepConfigError?.code ?? "UNKNOWN"}
+        processRef={processInstanceId}
+        reference={stepConfigError?.digest}
+        onRetry={() => {
+          fetchStepConfig().catch(() => {
+            // Error is stored in `stepConfigError`.
+          });
+        }}
+      />
     );
   }
 

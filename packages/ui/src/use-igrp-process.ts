@@ -2,11 +2,12 @@
 
 import { useState, useCallback, useEffect } from "react";
 import {
-  fetchStepConfig as fetchStepConfigAction,
+  fetchStepConfigSafe as fetchStepConfigAction,
   callCompleteTask as callCompleteTaskAction,
   callSaveTask as callSaveTaskAction,
 } from "./process-actions";
 import { resolveFormDataForTask } from "./lib/form-data-fallback";
+import { IGRPProcessError, toProcessError } from "./lib/process-error";
 import type {
   StepConfigResult,
   IGRPProcessClientConfig,
@@ -39,7 +40,8 @@ export function useIGRPProcess(
   // were `false`, IGRPProcessPage would treat `!stepConfig` as an error and
   // flash the fallback before the request begins.
   const [isLoadingStepConfig, setIsLoadingStepConfig] = useState(true);
-  const [stepConfigError, setStepConfigError] = useState<Error | null>(null);
+  const [stepConfigError, setStepConfigError] =
+    useState<IGRPProcessError | null>(null);
 
   // Complete task state
   const [completeTaskResult, setCompleteTaskResult] =
@@ -60,13 +62,13 @@ export function useIGRPProcess(
     setStepConfigError(null);
     try {
       const result = await fetchStepConfigAction(params, config);
-      setStepConfigData(result);
-      return result;
+      if (!result.ok) throw new IGRPProcessError(result.error);
+      setStepConfigData(result.data);
+      return result.data;
     } catch (err) {
-      const error =
-        err instanceof Error
-          ? err
-          : new Error("Não foi possível carregar a configuração do passo");
+      // Expected failures arrive as IGRPProcessError; anything else is a
+      // transport/redacted throw and becomes UNKNOWN (keeping its digest).
+      const error = toProcessError(err);
       setStepConfigError(error);
       throw error;
     } finally {

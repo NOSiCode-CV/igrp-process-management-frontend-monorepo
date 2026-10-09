@@ -1,5 +1,6 @@
 import type { ProcessInstance } from "@igrp/platform-process-management-types";
 import type { getIGRPProcessClient } from "./api-client";
+import { IGRPProcessError } from "./process-error";
 
 type ProcessManagementClient = Awaited<ReturnType<typeof getIGRPProcessClient>>;
 
@@ -41,9 +42,11 @@ export async function resolveProcessInstance(
   });
   const match = search.data?.content?.[0];
   if (!match) {
-    throw new Error(
-      `Nenhuma instância de processo encontrada com o número: ${trimmed}`,
-    );
+    throw new IGRPProcessError({
+      code: "NOT_FOUND",
+      message: `Nenhuma instância de processo encontrada com o número: ${trimmed}`,
+      status: 404,
+    });
   }
   return match;
 }
