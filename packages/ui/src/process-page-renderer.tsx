@@ -298,30 +298,57 @@ export default function IGRPProcessPageRenderer({
     });
   }, [steps, activityProgress]);
 
-  // Consultation: enable click on COMPLETED + CURRENT by flipping isActive.
-  // IGRPStepperProcess uses `disabled={!isActive}`; visual state still comes
-  // from `completed={isCompleted}` + the controlled `currentStep` value.
+  // Steps the engine actually ran: present in `activityProgress` as CURRENT or
+  // COMPLETED. A step in the definition but absent here (or PENDING) was never
+  // executed — e.g. a branch a BPMN gateway routed around (DG authorization
+  // that this process skipped). `effectiveSteps` can't tell these apart on its
+  // own: once the process finishes (no CURRENT) its fallback marks every
+  // not-visited step `isCompleted`, so a skipped branch looks green.
+  const executedStepKeys = useMemo(() => {
+    const keys = new Set<string>();
+    (activityProgress || []).forEach((a) => {
+      if (a.activityId && (a.status === "CURRENT" || a.status === "COMPLETED")) {
+        keys.add(a.activityId);
+      }
+    });
+    return keys;
+  }, [activityProgress]);
+
+  // Consultation: show ONLY the steps that were executed (a read-only history
+  // of what the process actually did), renumbered 1..n so the hidden skipped
+  // steps leave no gaps. Also enable click on COMPLETED + CURRENT by flipping
+  // isActive — IGRPStepperProcess uses `disabled={!isActive}`; visual state
+  // still comes from `completed={isCompleted}` + the controlled `currentStep`.
+  // Execution keeps the full planned flow (upcoming PENDING steps included) so
+  // the user sees what is still ahead.
   const displaySteps = useMemo(() => {
     if (!isConsultation || !effectiveSteps) return effectiveSteps;
-    return effectiveSteps.map((s) => ({
-      ...s,
-      isActive: s.isCompleted || s.isActive,
-    }));
-  }, [isConsultation, effectiveSteps]);
+    return effectiveSteps
+      .filter((s) => executedStepKeys.has(s.stepKey))
+      .map((s, index) => ({
+        ...s,
+        step: index + 1,
+        isActive: s.isCompleted || s.isActive,
+      }));
+  }, [isConsultation, effectiveSteps, executedStepKeys]);
 
   // Default selected step in consultation: CURRENT → last COMPLETED → first.
+  // Picks from `displaySteps` (the executed, visible steps), never from the
+  // full `effectiveSteps`: a skipped step can be flagged `isCompleted` by the
+  // finished-process fallback, and selecting it would point `viewedStepKey` at
+  // a step that isn't in the stepper — so nothing would load.
   useEffect(() => {
-    if (!isConsultation || selectedStepKey || !effectiveSteps?.length) return;
-    const lastCompleted = [...effectiveSteps]
+    if (!isConsultation || selectedStepKey || !displaySteps?.length) return;
+    const lastCompleted = [...displaySteps]
       .reverse()
       .find((s) => s.isCompleted)?.stepKey;
     const initial =
-      effectiveUserTaskKey || lastCompleted || effectiveSteps[0]?.stepKey;
+      effectiveUserTaskKey || lastCompleted || displaySteps[0]?.stepKey;
     if (initial) setSelectedStepKey(initial);
   }, [
     isConsultation,
     selectedStepKey,
-    effectiveSteps,
+    displaySteps,
     effectiveUserTaskKey,
     setSelectedStepKey,
   ]);
@@ -504,10 +531,13 @@ export default function IGRPProcessPageRenderer({
     }
   };
 
+  // Index into `displaySteps` (what the stepper renders), not `effectiveSteps`:
+  // in consultation the two differ (skipped steps filtered out, renumbered), so
+  // using the unfiltered list would select the wrong tab.
   const currentStep = useMemo(() => {
     const key = viewedStepKey;
-    return (effectiveSteps || []).findIndex((step) => step.stepKey === key) + 1;
-  }, [effectiveSteps, viewedStepKey]);
+    return (displaySteps || []).findIndex((step) => step.stepKey === key) + 1;
+  }, [displaySteps, viewedStepKey]);
 
   const handleStepChange = useCallback(
     (_step: number, stepData: { stepKey: string }) => {
