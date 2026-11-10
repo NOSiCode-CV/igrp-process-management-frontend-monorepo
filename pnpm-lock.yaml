@@ -79,8 +79,8 @@ importers:
   packages/client:
     dependencies:
       '@igrp/platform-process-management-types':
-        specifier: 0.1.0-beta.21
-        version: 0.1.0-beta.21
+        specifier: 0.2.0-beta.1
+        version: 0.2.0-beta.1
     devDependencies:
       '@types/node':
         specifier: ^24.1.0
@@ -1135,6 +1135,10 @@ packages:
 
   '@igrp/platform-process-management-types@0.1.0-beta.21':
     resolution: {integrity: sha512-9y3pL/jCzGNaoTJ61ms2tBC10jdQiZ21PQ+3Vu9T12nJ85Po2BkK8D6Xosta379e7vZ1GXzufU0Ejcgyi0M7rg==}
+    engines: {node: '>=20.x.x'}
+
+  '@igrp/platform-process-management-types@0.2.0-beta.1':
+    resolution: {integrity: sha512-O0q13UStYWuBdnAV4DxJafpEr8QSSm0PVs/ZDJ7BLqwr9nx9RClA9wrFgVPM+4ISyNfkKblmloCW+/7/1i+XOw==}
     engines: {node: '>=20.x.x'}
 
   '@img/colour@1.1.0':
@@ -7250,6 +7254,8 @@ snapshots:
       '@igrp/platform-process-management-types': 0.1.0-beta.21
 
   '@igrp/platform-process-management-types@0.1.0-beta.21': {}
+
+  '@igrp/platform-process-management-types@0.2.0-beta.1': {}
 
   '@img/colour@1.1.0':
     optional: true
