@@ -181,6 +181,7 @@ export default function IGRPProcessPageRenderer({
     selectedStepKey,
     setSelectedStepKey,
     config,
+    onExit,
   } = useIGRPProcessContext();
 
   const isBusy = isLoading || isActionPending;
@@ -307,7 +308,10 @@ export default function IGRPProcessPageRenderer({
   const executedStepKeys = useMemo(() => {
     const keys = new Set<string>();
     (activityProgress || []).forEach((a) => {
-      if (a.activityId && (a.status === "CURRENT" || a.status === "COMPLETED")) {
+      if (
+        a.activityId &&
+        (a.status === "CURRENT" || a.status === "COMPLETED")
+      ) {
         keys.add(a.activityId);
       }
     });
@@ -377,6 +381,12 @@ export default function IGRPProcessPageRenderer({
   );
 
   const handleReturnAfterComplete = useCallback(() => {
+    // Hosted in a modal (launcher): close it instead of navigating the app.
+    if (onExit) {
+      onExit();
+      return;
+    }
+
     const target = resolveTaskReturnTarget({
       configuredUrl: config?.taskReturnUrl,
       search: window.location.search,
@@ -389,7 +399,7 @@ export default function IGRPProcessPageRenderer({
     }
 
     goToHref(target.href);
-  }, [config?.taskReturnUrl, goToHref, router]);
+  }, [config?.taskReturnUrl, goToHref, router, onExit]);
 
   // Callback to register step methods
   const handleRegisterMethods = useCallback((methods: IGRPStepMethods) => {
@@ -501,10 +511,11 @@ export default function IGRPProcessPageRenderer({
           // by the guard above.
           setTaskCompleted(true);
           succeeded = true;
-          const summaryHref = resolveSummaryPageHref(
-            config?.summaryPage,
-            processInstanceId,
-          );
+          // In modal mode (onExit set) the host closes on the success dialog's
+          // "Voltar" → onExit; don't navigate to a summary page under the modal.
+          const summaryHref = onExit
+            ? null
+            : resolveSummaryPageHref(config?.summaryPage, processInstanceId);
           if (summaryHref) {
             goToHref(summaryHref);
             return stepResult;
@@ -571,7 +582,8 @@ export default function IGRPProcessPageRenderer({
         className="py-0"
         iconBackButton={`ArrowLeft`}
         isSticky={true}
-        showBackButton={true}
+        // Hidden in modal mode (onExit set): the modal has its own close.
+        showBackButton={!onExit}
         // Prefer browser history over a hardcoded basepath/my-tasks URL —
         // consultation (and most execution entries) come from another page
         // in the same app (e.g. gestão de evacuações).

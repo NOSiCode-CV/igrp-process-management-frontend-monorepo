@@ -26,6 +26,14 @@ export type IGRPProcessContextValue = ReturnType<typeof useIGRPProcess> & {
   /** Currently selected step key (consultation). Null until initialized. */
   selectedStepKey: string | null;
   setSelectedStepKey: (stepKey: string | null) => void;
+  /**
+   * Optional exit handler. When set, the renderer calls it INSTEAD of navigating
+   * (router.back / returnUrl / summary) after a task is completed, and hides the
+   * page back button. This is what lets the process page live inside a modal
+   * (e.g. the process launcher) — the host closes the modal instead of leaving
+   * the page. Unset → the default page-navigation behaviour is unchanged.
+   */
+  onExit?: (() => void) | null;
 };
 
 const IGRPProcessContext = createContext<IGRPProcessContextValue | null>(null);
@@ -42,6 +50,11 @@ interface IGRPProcessProviderProps {
    * - with `userTaskInstanceId` → execution
    */
   mode?: IGRPProcessMode;
+  /**
+   * When set, the page calls this instead of navigating after a completed task
+   * and hides the back button — used to host the page inside a modal.
+   */
+  onExit?: (() => void) | null;
 }
 
 function resolveProcessMode(
@@ -61,6 +74,7 @@ export function IGRPProcessProvider({
   config,
   resolveStepComponent = null,
   mode: modeProp,
+  onExit = null,
 }: IGRPProcessProviderProps) {
   const mode = resolveProcessMode(params, modeProp);
   const readOnly = mode === "consultation";
@@ -92,6 +106,7 @@ export function IGRPProcessProvider({
         readOnly,
         selectedStepKey,
         setSelectedStepKey,
+        onExit,
       }}
     >
       {children}

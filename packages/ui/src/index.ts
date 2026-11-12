@@ -69,6 +69,17 @@ export type { IGRPProcessContextValue } from "./igrp-process-context";
 // Hook
 export { useIGRPProcess } from "./use-igrp-process";
 
+// Process launcher (header-slot menu: list app processes → start → form modal)
+export { IGRPProcessLauncherMenu } from "./components/process-launcher-menu/process-launcher-menu";
+export { listAppProcesses, startAppProcess } from "./process-launcher-actions";
+export type {
+  IGRPLauncherArea,
+  IGRPLauncherProcess,
+  IGRPLauncherTaskParams,
+  IGRPLauncherStartResult,
+  IGRPProcessLauncherMenuProps,
+} from "./process-launcher-types";
+
 // Components
 export { IGRPProcessPage } from "./process-page";
 export { IGRPProcessPageRenderer } from "./process-page-renderer";

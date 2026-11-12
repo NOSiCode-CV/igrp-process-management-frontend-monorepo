@@ -1,6 +1,13 @@
 packages:
   - "packages/*"
   - "apps/*"
+# Single @types/react across the monorepo. The design system's own .d.ts resolve
+# React types from the hoisted copy; a stray @types/react@18 (from apps/demo-app)
+# made ComponentProps<> on its Radix re-exports (ModalDialog/DropdownMenu) collapse
+# to no-props when consumed from the react-19 client-ui, breaking its type build.
+overrides:
+  "@types/react": "19.2.10"
+  "@types/react-dom": "19.2.3"
 allowBuilds:
   '@parcel/watcher': true
   '@swc/core': true
