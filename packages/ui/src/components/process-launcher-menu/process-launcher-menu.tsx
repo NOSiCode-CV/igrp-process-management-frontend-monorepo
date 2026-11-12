@@ -18,6 +18,7 @@ import {
   IGRPDropdownMenu,
   IGRPDropdownMenuTrigger,
   IGRPDropdownMenuContent,
+  ScrollArea,
 } from "@igrp/igrp-framework-react-design-system";
 import {
   listAppProcesses,
@@ -251,10 +252,13 @@ export function IGRPProcessLauncherMenu({
     <>
       <IGRPDropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <IGRPDropdownMenuTrigger asChild>
-          <IGRPButton variant="outline" size="sm" className="gap-2">
-            <IGRPIcon iconName="Workflow" className="size-4" />
-            <span className="hidden sm:inline">{triggerLabel}</span>
-          </IGRPButton>
+          <IGRPButton
+            variant="ghost"
+            size="icon"
+            iconName="Workflow"
+            aria-label={triggerLabel}
+            title={triggerLabel}
+          />
         </IGRPDropdownMenuTrigger>
 
         <IGRPDropdownMenuContent
@@ -296,10 +300,11 @@ export function IGRPProcessLauncherMenu({
               {/* Master–detail */}
               <div className="grid min-h-0 flex-1 grid-cols-[13.75rem_1fr]">
                 {/* Areas */}
-                <nav
-                  aria-label="Áreas"
-                  className="grid content-start gap-px overflow-auto border-r bg-muted/30 p-2"
-                >
+                <ScrollArea className="min-h-0 border-r bg-muted/30">
+                  <nav
+                    aria-label="Áreas"
+                    className="grid content-start gap-px p-2"
+                  >
                   {loadingList
                     ? [60, 85, 70, 75, 55].map((w, i) => (
                         <div
@@ -349,10 +354,12 @@ export function IGRPProcessLauncherMenu({
                           </Fragment>
                         );
                       })}
-                </nav>
+                  </nav>
+                </ScrollArea>
 
                 {/* Detail */}
-                <div className="overflow-auto p-3">
+                <ScrollArea className="min-h-0">
+                  <div className="p-3">
                   {loadingList ? (
                     <div className="flex h-full flex-col items-center justify-center gap-2.5 text-center">
                       <IGRPLoadingSpinner />
@@ -422,7 +429,8 @@ export function IGRPProcessLauncherMenu({
                       </>
                     )
                   )}
-                </div>
+                  </div>
+                </ScrollArea>
               </div>
             </div>
           )}

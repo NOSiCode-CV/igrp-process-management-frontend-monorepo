@@ -745,11 +745,6 @@
       }
     }
   }
-  .sm\:inline {
-    @media (width >= 40rem) {
-      display: inline;
-    }
-  }
   .dark\:bg-amber-300\/40 {
     &:is(.dark *) {
       background-color: color-mix(in srgb, oklch(87.9% 0.169 91.605) 40%, transparent);
