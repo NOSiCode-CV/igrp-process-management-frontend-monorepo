@@ -163,10 +163,14 @@ export function IGRPProcessLauncherMenu({
     (task: IGRPLauncherTaskParams) => {
       const path = buildTaskExecutionPath(task);
       if (processExecutionBaseUrl) {
+        // Another origin: hard navigation (the page unloads, overlay goes with it).
         window.location.assign(`${processExecutionBaseUrl}${path}`);
         return;
       }
+      // Same app: client navigation keeps this component mounted, so clear the
+      // "A iniciar…" overlay once we've pushed — the task page shows its own load.
       router.push(path as Parameters<typeof router.push>[0]);
+      setStartingName(null);
     },
     [processExecutionBaseUrl, router],
   );

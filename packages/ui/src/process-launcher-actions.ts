@@ -146,17 +146,40 @@ export async function listAppProcesses(
   }
 }
 
+/** Pull a human message out of a backend error body (object or JSON string). */
+function fromDetails(details: unknown): string | null {
+  if (!details) return null;
+  let obj: Record<string, unknown> | null = null;
+  if (typeof details === "object") {
+    obj = details as Record<string, unknown>;
+  } else if (typeof details === "string") {
+    try {
+      obj = JSON.parse(details) as Record<string, unknown>;
+    } catch {
+      return details; // plain-text body
+    }
+  }
+  if (!obj) return null;
+  const pick = (obj.message ??
+    obj.detail ??
+    obj.title ??
+    obj.error ??
+    obj.errorMessage) as string | undefined;
+  if (pick) return pick;
+  try {
+    return JSON.stringify(obj).slice(0, 400);
+  } catch {
+    return null;
+  }
+}
+
 function toMessage(error: unknown): string {
   if (error && typeof error === "object") {
-    const details = (error as { details?: string }).details;
-    if (details) {
-      try {
-        const parsed = JSON.parse(details) as { message?: string };
-        if (parsed.message) return parsed.message;
-      } catch {
-        /* fall through */
-      }
-    }
+    // client-ts ApiClientError carries the backend body in `details` (object or
+    // text). Prefer that over the generic "HTTP Error: 500 …" `message`.
+    const fromBody = fromDetails((error as { details?: unknown }).details);
+    const status = (error as { status?: number }).status;
+    if (fromBody) return status ? `${fromBody} (HTTP ${status})` : fromBody;
     const message = (error as { message?: string }).message;
     if (message) return message;
   }
@@ -193,6 +216,11 @@ export async function startAppProcess(
       // The backend requires a priority (the process-map always sends one via a
       // modal); default to Normal so the launcher stays a single click.
       priority: input.priority ?? 1,
+      // Send empty arrays, never omit: the backend does `getVariables().forEach`
+      // / `getAssignmentRules().forEach` and throws a NullPointerException
+      // ("Cannot invoke List.forEach … is null") when these come through as null.
+      variables: [],
+      assignmentRules: [],
     });
     const instance = started.data;
     if (!instance?.id) {
