@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   cn,
   useIGRPToast,
@@ -18,7 +19,7 @@ import {
   listAppProcesses,
   startAppProcess,
 } from "../../process-launcher-actions";
-import { ProcessLauncherModal } from "./process-launcher-modal";
+import { IGRP_RETURN_URL_PARAM } from "../../lib/task-return-url";
 import type { IGRPProcessLauncherMenuProps } from "../../process-launcher-types";
 import type {
   IGRPLauncherArea,
@@ -26,20 +27,20 @@ import type {
   IGRPLauncherTaskParams,
 } from "../../process-launcher-types";
 
-interface ModalState {
-  open: boolean;
-  loading: boolean;
-  error: string | null;
-  params: IGRPLauncherTaskParams | null;
-  title?: string;
+/**
+ * Build the task-execution route for a started task, with the current page as
+ * `returnUrl` so the task's "Voltar" lands back here.
+ *
+ * Segments match the generated runtime route
+ * `(generated)/process/[...process]`: processKey / processInstanceId /
+ * userTaskKey / userTaskInstanceId.
+ */
+function buildTaskExecutionPath(task: IGRPLauncherTaskParams): string {
+  const path = `/process/${task.processKey}/${task.processInstanceId}/${task.userTaskKey}/${task.userTaskInstanceId}`;
+  if (typeof window === "undefined") return path;
+  const returnUrl = encodeURIComponent(window.location.href);
+  return `${path}?${IGRP_RETURN_URL_PARAM}=${returnUrl}`;
 }
-
-const CLOSED_MODAL: ModalState = {
-  open: false,
-  loading: false,
-  error: null,
-  params: null,
-};
 
 /**
  * Header-slot menu that lists the current application's processes and starts
@@ -49,29 +50,35 @@ const CLOSED_MODAL: ModalState = {
  * <IGRPProcessLauncherMenu
  *   appCode={process.env.IGRP_APP_CODE!}
  *   config={{ baseUrl, accessToken }}
- *   resolveStepComponent={resolveStepComponent}
  * />
  * ```
  *
  * On click it starts the process (`createAndStartProcess` + claim of the first
- * task) and opens the task's form in a modal over the app. The process list is
- * loaded lazily the first time the menu opens.
+ * task) and then **redirects to the task-execution route** — the same pattern
+ * as the process-map and the task lists — so the form opens on its own page,
+ * with a `returnUrl` back to here. By default it navigates the runtime's own
+ * route (`/process/...`, basePath applied by the router); set
+ * `processExecutionBaseUrl` to send execution to another origin instead. The
+ * process list loads lazily the first time the menu opens.
  */
 export function IGRPProcessLauncherMenu({
   appCode,
   config,
-  resolveStepComponent,
   triggerLabel = "Iniciar processo",
   groupByArea = true,
+  processExecutionBaseUrl,
   onProcessStarted,
 }: IGRPProcessLauncherMenuProps) {
   const { igrpToast } = useIGRPToast();
+  const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [areas, setAreas] = useState<IGRPLauncherArea[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [loadingList, setLoadingList] = useState(false);
-  const [modal, setModal] = useState<ModalState>(CLOSED_MODAL);
+  // Name of the process being started → drives the "A iniciar…" busy overlay
+  // (we redirect on success, so this stays until the page navigates away).
+  const [startingName, setStartingName] = useState<string | null>(null);
 
   // Lazy-load the process list the first time the menu opens.
   // NB: `loadingList` must NOT be a dependency. It is set inside the effect, so
@@ -97,16 +104,25 @@ export function IGRPProcessLauncherMenu({
     };
   }, [menuOpen, loaded, appCode, config]);
 
+  const goToTask = useCallback(
+    (task: IGRPLauncherTaskParams) => {
+      const path = buildTaskExecutionPath(task);
+      if (processExecutionBaseUrl) {
+        // Another origin/basePath: a hard navigation (the router would apply
+        // THIS app's basePath to a foreign URL).
+        window.location.assign(`${processExecutionBaseUrl}${path}`);
+        return;
+      }
+      // Same app: client navigation so the router applies NEXT_PUBLIC_BASE_PATH.
+      router.push(path as Parameters<typeof router.push>[0]);
+    },
+    [processExecutionBaseUrl, router],
+  );
+
   const handleStart = useCallback(
     async (process: IGRPLauncherProcess) => {
       setMenuOpen(false);
-      setModal({
-        open: true,
-        loading: true,
-        error: null,
-        params: null,
-        title: process.name,
-      });
+      setStartingName(process.name);
 
       const result = await startAppProcess(
         {
@@ -118,7 +134,12 @@ export function IGRPProcessLauncherMenu({
       );
 
       if (!result.ok) {
-        setModal((prev) => ({ ...prev, loading: false, error: result.error }));
+        setStartingName(null);
+        igrpToast({
+          type: "error",
+          title: "Não foi possível iniciar",
+          description: result.error,
+        });
         return;
       }
 
@@ -129,10 +150,11 @@ export function IGRPProcessLauncherMenu({
       });
 
       if (result.task) {
-        setModal((prev) => ({ ...prev, loading: false, params: result.task }));
+        // Keep the overlay up — the redirect unmounts the page.
+        goToTask(result.task);
       } else {
         // Started but nothing to open now (async branch / assigned elsewhere).
-        setModal(CLOSED_MODAL);
+        setStartingName(null);
         igrpToast({
           type: "success",
           title: "Processo iniciado",
@@ -142,7 +164,7 @@ export function IGRPProcessLauncherMenu({
         });
       }
     },
-    [config, igrpToast, onProcessStarted],
+    [config, igrpToast, onProcessStarted, goToTask],
   );
 
   const hasProcesses = areas.some((a) => a.processes.length > 0);
@@ -211,16 +233,16 @@ export function IGRPProcessLauncherMenu({
         </IGRPDropdownMenuContent>
       </IGRPDropdownMenu>
 
-      <ProcessLauncherModal
-        open={modal.open}
-        onOpenChange={(open) => setModal((prev) => ({ ...prev, open }))}
-        params={modal.params}
-        loading={modal.loading}
-        error={modal.error}
-        title={modal.title}
-        config={config}
-        resolveStepComponent={resolveStepComponent}
-      />
+      {startingName && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border bg-background px-4 py-2 text-sm shadow-lg"
+        >
+          <IGRPLoadingSpinner />
+          <span>A iniciar {startingName}…</span>
+        </div>
+      )}
     </>
   );
 }

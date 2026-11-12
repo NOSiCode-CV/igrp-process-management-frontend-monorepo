@@ -1,7 +1,4 @@
-import type {
-  IGRPResolveStepComponent,
-  IGRPProcessClientConfig,
-} from "./types";
+import type { IGRPProcessClientConfig } from "./types";
 
 /** A process a user can start from the launcher menu. */
 export interface IGRPLauncherProcess {
@@ -59,16 +56,17 @@ export interface IGRPProcessLauncherMenuProps {
   appCode: string;
   /** Process-management API config (base URL + access token). */
   config: IGRPProcessClientConfig;
-  /**
-   * Resolve the step (form) component. The forms are app-generated code, so the
-   * consuming app supplies this (dynamic import with a static prefix). Required
-   * to render the form inside the modal.
-   */
-  resolveStepComponent: IGRPResolveStepComponent;
   /** Trigger label. Default: "Iniciar processo". */
   triggerLabel?: string;
   /** Group processes by area in the menu. Default: true. */
   groupByArea?: boolean;
+  /**
+   * Base URL (origin + optional basePath) of the process-execution app. When
+   * set, a started task opens there via a hard navigation. Omit to open the
+   * task on the runtime's OWN `/process/...` route (the common case) — then the
+   * router applies `NEXT_PUBLIC_BASE_PATH`.
+   */
+  processExecutionBaseUrl?: string;
   /** Called after a process is started (with or without an opened task). */
   onProcessStarted?: (info: {
     processInstanceId: string;
