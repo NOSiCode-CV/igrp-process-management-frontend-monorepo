@@ -74,8 +74,12 @@ export function IGRPProcessLauncherMenu({
   const [modal, setModal] = useState<ModalState>(CLOSED_MODAL);
 
   // Lazy-load the process list the first time the menu opens.
+  // NB: `loadingList` must NOT be a dependency. It is set inside the effect, so
+  // including it would re-run the effect, whose cleanup cancels the in-flight
+  // request's closure — leaving `loadingList` stuck `true` forever. Gate on
+  // `loaded` only; `loadingList` is pure render state.
   useEffect(() => {
-    if (!menuOpen || loaded || loadingList) return;
+    if (!menuOpen || loaded) return;
     let cancelled = false;
     setLoadingList(true);
     listAppProcesses(appCode, config)
@@ -91,7 +95,7 @@ export function IGRPProcessLauncherMenu({
     return () => {
       cancelled = true;
     };
-  }, [menuOpen, loaded, loadingList, appCode, config]);
+  }, [menuOpen, loaded, appCode, config]);
 
   const handleStart = useCallback(
     async (process: IGRPLauncherProcess) => {
@@ -108,7 +112,7 @@ export function IGRPProcessLauncherMenu({
         {
           processKey: process.processKey,
           applicationBase: process.applicationBase,
-          processDefinitionId: process.id,
+          processDefinitionId: process.releaseId,
         },
         config,
       );

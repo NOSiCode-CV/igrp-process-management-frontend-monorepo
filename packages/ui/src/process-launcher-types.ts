@@ -5,8 +5,10 @@ import type {
 
 /** A process a user can start from the launcher menu. */
 export interface IGRPLauncherProcess {
-  /** Process definition id. */
+  /** Process row id (used as the menu item key). */
   id: string;
+  /** Release id — sent as `processDefinitionId` when starting (as the process-map does). */
+  releaseId: string;
   /** Process definition key — used to start the instance. */
   processKey: string;
   /** Display name (falls back to processKey when absent). */

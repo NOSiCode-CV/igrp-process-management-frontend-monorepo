@@ -28,6 +28,7 @@ function toLauncherProcess(
 ): IGRPLauncherProcess {
   return {
     id: p.id,
+    releaseId: p.releaseId,
     processKey: p.processKey,
     name: p.name?.trim() || p.processKey,
     description: p.description?.trim() || undefined,
@@ -127,6 +128,8 @@ export async function startAppProcess(
     applicationBase: string;
     /** Process definition id — sent alongside the key, as the process-map does. */
     processDefinitionId?: string;
+    /** Start priority (1 = Normal, 2 = Urgente). Defaults to 1. */
+    priority?: number;
   },
   config: IGRPProcessClientConfig,
 ): Promise<IGRPLauncherStartResult> {
@@ -137,6 +140,9 @@ export async function startAppProcess(
       processDefinitionId: input.processDefinitionId,
       processKey: input.processKey,
       applicationBase: input.applicationBase,
+      // The backend requires a priority (the process-map always sends one via a
+      // modal); default to Normal so the launcher stays a single click.
+      priority: input.priority ?? 1,
     });
     const instance = started.data;
     if (!instance?.id) {
