@@ -152,7 +152,7 @@ export function IGRPProcessLauncherMenu({
       <IGRPDropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <IGRPDropdownMenuTrigger asChild>
           <IGRPButton variant="outline" size="sm" className="gap-2">
-            <IGRPIcon iconName="Play" className="size-4" />
+            <IGRPIcon iconName="Workflow" className="size-4" />
             <span className="hidden sm:inline">{triggerLabel}</span>
           </IGRPButton>
         </IGRPDropdownMenuTrigger>
