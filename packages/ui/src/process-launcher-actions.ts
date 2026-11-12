@@ -53,17 +53,42 @@ export async function listAppProcesses(
 
   try {
     const client = await getIGRPProcessClient(config);
-    const areasResponse = await client.areas.getAreas({
+    // Top-level areas for the app, then their subareas (getAreas({ parentId }),
+    // the same call the process-map's getSubareas uses). Fetching the whole
+    // hierarchy is what surfaces processes that live under subareas instead of
+    // directly on a top area — otherwise the menu shows only areas with direct
+    // processes. No `status` filter here: processes are filtered by status below.
+    const topResponse = await client.areas.getAreas({
       applicationBase: appCode,
-      status: ACTIVE,
       size: 500,
     });
-    const areas = areasResponse.data?.content ?? [];
+    type AreaNode = NonNullable<
+      Awaited<ReturnType<typeof client.areas.getAreas>>["data"]["content"]
+    >[number];
+    const byId = new Map<string, AreaNode>();
+    for (const a of topResponse.data?.content ?? []) byId.set(a.id, a);
 
-    // id → area, to resolve each area's top-level ancestor name (the left-nav
-    // section header). Subareas carry `areaId` pointing at their parent.
-    const byId = new Map<string, (typeof areas)[number]>();
-    for (const area of areas) byId.set(area.id, area);
+    let frontier = [...byId.values()];
+    for (let depth = 0; depth < 4 && frontier.length > 0; depth++) {
+      const childLists = await Promise.all(
+        frontier.map((a) =>
+          client.areas
+            .getAreas({ parentId: a.id, size: 500 })
+            .then((r) => r.data?.content ?? [])
+            .catch(() => [] as AreaNode[]),
+        ),
+      );
+      const next: AreaNode[] = [];
+      for (const child of childLists.flat()) {
+        if (child?.id && !byId.has(child.id)) {
+          byId.set(child.id, child);
+          next.push(child);
+        }
+      }
+      frontier = next;
+    }
+
+    const areas = [...byId.values()];
 
     const topAncestorName = (area: (typeof areas)[number]): string => {
       let current = area;

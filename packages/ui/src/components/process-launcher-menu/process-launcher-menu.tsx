@@ -305,13 +305,9 @@ export function IGRPProcessLauncherMenu({
                         />
                       ))
                     : areas.map((area) => {
-                        const showHeader =
-                          area.groupName !== lastGroup &&
-                          areas.some(
-                            (a) =>
-                              a.groupName === area.groupName &&
-                              a.name !== a.groupName,
-                          );
+                        // Always show the group header when the top-level area
+                        // changes (matches the design's two-tier left nav).
+                        const showHeader = area.groupName !== lastGroup;
                         lastGroup = area.groupName;
                         const count = searching
                           ? (matchCountByArea.get(area.id) ?? 0)
@@ -373,7 +369,7 @@ export function IGRPProcessLauncherMenu({
                             em todas as áreas
                           </span>
                         </div>
-                        <div className="grid grid-cols-1 gap-0.5 sm:grid-cols-2">
+                        <div className="grid grid-cols-2 gap-0.5">
                           {searchResults.map(renderProcess)}
                         </div>
                       </>
@@ -416,7 +412,7 @@ export function IGRPProcessLauncherMenu({
                             {activeArea.processes.length === 1 ? "" : "s"}
                           </span>
                         </div>
-                        <div className="grid grid-cols-1 gap-0.5 sm:grid-cols-2">
+                        <div className="grid grid-cols-2 gap-0.5">
                           {activeArea.processes.map(renderProcess)}
                         </div>
                       </>
