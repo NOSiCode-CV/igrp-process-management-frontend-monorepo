@@ -34,6 +34,7 @@
     --font-weight-semibold: 600;
     --tracking-wider: 0.05em;
     --leading-tight: 1.25;
+    --animate-spin: spin 1s linear infinite;
     --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -351,6 +352,9 @@
   .animate-pulse {
     animation: var(--animate-pulse);
   }
+  .animate-spin {
+    animation: var(--animate-spin);
+  }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -450,6 +454,10 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+  .border-2 {
+    border-style: var(--tw-border-style);
+    border-width: 2px;
+  }
   .border-r {
     border-right-style: var(--tw-border-style);
     border-right-width: 1px;
@@ -462,8 +470,14 @@
     --tw-border-style: dashed;
     border-style: dashed;
   }
+  .border-muted {
+    border-color: var(--muted);
+  }
   .border-primary {
     border-color: var(--primary);
+  }
+  .border-t-primary {
+    border-top-color: var(--primary);
   }
   .bg-amber-100 {
     background-color: var(--color-amber-100);
@@ -1127,6 +1141,11 @@
 @property --tw-duration {
   syntax: "*";
   inherits: false;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes pulse {
   50% {

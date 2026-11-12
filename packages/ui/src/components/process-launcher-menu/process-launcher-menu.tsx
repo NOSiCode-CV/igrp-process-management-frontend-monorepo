@@ -435,7 +435,12 @@ export function IGRPProcessLauncherMenu({
           aria-live="polite"
           className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border bg-background px-4 py-2 text-sm shadow-lg"
         >
-          <IGRPLoadingSpinner />
+          {/* Small inline spinner — IGRPLoadingSpinner is a full centered loader
+              and renders huge inside this pill. */}
+          <span
+            aria-hidden="true"
+            className="size-4 shrink-0 animate-spin rounded-full border-2 border-muted border-t-primary"
+          />
           <span>A iniciar {startingName}…</span>
         </div>
       )}
