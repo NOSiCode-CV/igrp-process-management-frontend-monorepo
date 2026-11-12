@@ -60,6 +60,24 @@ export async function listAppProcesses(
     });
     const areas = areasResponse.data?.content ?? [];
 
+    // id → area, to resolve each area's top-level ancestor name (the left-nav
+    // section header). Subareas carry `areaId` pointing at their parent.
+    const byId = new Map<string, (typeof areas)[number]>();
+    for (const area of areas) byId.set(area.id, area);
+
+    const topAncestorName = (area: (typeof areas)[number]): string => {
+      let current = area;
+      // Guard against cycles / orphaned parents.
+      for (let hops = 0; hops < 12; hops++) {
+        const parentId = current.areaId;
+        if (!parentId) break;
+        const parent = byId.get(parentId);
+        if (!parent || parent.id === current.id) break;
+        current = parent;
+      }
+      return current.name;
+    };
+
     const groups: IGRPLauncherArea[] = [];
     for (const area of areas) {
       const active = (area.process ?? []).filter(
@@ -84,12 +102,19 @@ export async function listAppProcesses(
           id: area.id,
           code: area.code,
           name: area.name,
+          groupName: topAncestorName(area),
           processes,
         });
       }
     }
 
-    return groups.sort(sortByName);
+    // Sort by group (top area), then by area name, so the left nav reads in order.
+    return groups.sort(
+      (a, b) =>
+        a.groupName.localeCompare(b.groupName, undefined, {
+          sensitivity: "base",
+        }) || sortByName(a, b),
+    );
   } catch (error) {
     console.warn("[process-launcher] listAppProcesses failed:", error);
     return [];

@@ -21,6 +21,9 @@ export interface IGRPLauncherArea {
   id: string;
   code: string;
   name: string;
+  /** Top-level ancestor area name, for the left-nav section header. Equals
+   * `name` when the area is itself top-level. */
+  groupName: string;
   processes: IGRPLauncherProcess[];
 }
 
