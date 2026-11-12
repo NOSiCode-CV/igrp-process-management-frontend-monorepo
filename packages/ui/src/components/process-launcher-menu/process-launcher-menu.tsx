@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
 import {
   cn,
@@ -24,6 +31,9 @@ import type {
   IGRPLauncherTaskParams,
 } from "../../process-launcher-types";
 
+/** A process plus the area it belongs to — used for global search results. */
+type ScopedProcess = IGRPLauncherProcess & { areaName: string };
+
 /**
  * Build the task-execution route for a started task, with the current page as
  * `returnUrl` so the task's "Voltar" lands back here. Segments match the
@@ -36,11 +46,27 @@ function buildTaskExecutionPath(task: IGRPLauncherTaskParams): string {
   return `${path}?${IGRP_RETURN_URL_PARAM}=${encodeURIComponent(window.location.href)}`;
 }
 
-function matchesQuery(process: IGRPLauncherProcess, q: string): boolean {
+function processMatches(process: IGRPLauncherProcess, q: string): boolean {
   if (!q) return true;
   return (
     process.name.toLowerCase().includes(q) ||
     process.processKey.toLowerCase().includes(q)
+  );
+}
+
+/** Wrap the matched part of `text` in <mark> (case-insensitive, first hit). */
+function highlight(text: string, q: string): ReactNode {
+  if (!q) return text;
+  const i = text.toLowerCase().indexOf(q);
+  if (i < 0) return text;
+  return (
+    <>
+      {text.slice(0, i)}
+      <mark className="rounded-[3px] bg-amber-200 px-0.5 text-inherit dark:bg-amber-300/40">
+        {text.slice(i, i + q.length)}
+      </mark>
+      {text.slice(i + q.length)}
+    </>
   );
 }
 
@@ -52,12 +78,12 @@ function matchesQuery(process: IGRPLauncherProcess, q: string): boolean {
  * <IGRPProcessLauncherMenu appCode={process.env.IGRP_APP_CODE!} config={{ baseUrl, accessToken }} />
  * ```
  *
- * The menu is a searchable master–detail: areas (grouped by their top-level
- * area) on the left, the selected area's processes on the right. Choosing a
- * process starts it (`createAndStartProcess` + claim) and **redirects to the
- * task-execution route** — same pattern as the process-map and task lists — so
- * the form opens on its own page with a `returnUrl` back to here. Set
- * `processExecutionBaseUrl` to send execution to another origin.
+ * Searchable master–detail: areas (grouped by their top-level area) on the left,
+ * the selected area's processes on the right. Typing searches ALL areas at once.
+ * Choosing a process starts it (`createAndStartProcess` + claim) and **redirects
+ * to the task-execution route** so the form opens on its own page with a
+ * `returnUrl` back to here. Set `processExecutionBaseUrl` to send execution to
+ * another origin.
  */
 export function IGRPProcessLauncherMenu({
   appCode,
@@ -101,34 +127,37 @@ export function IGRPProcessLauncherMenu({
   }, [menuOpen, loaded, appCode, config]);
 
   const q = query.trim().toLowerCase();
+  const searching = q.length > 0;
 
-  // Areas with at least one process matching the query (processes filtered too).
-  const visibleAreas = useMemo(() => {
-    return areas
-      .map((area) => ({
-        ...area,
-        processes: area.processes.filter((p) => matchesQuery(p, q)),
-      }))
-      .filter((area) => area.processes.length > 0);
-  }, [areas, q]);
-
-  const totalVisible = useMemo(
-    () => visibleAreas.reduce((n, a) => n + a.processes.length, 0),
-    [visibleAreas],
+  const totalProcesses = useMemo(
+    () => areas.reduce((n, a) => n + a.processes.length, 0),
+    [areas],
   );
 
-  // Groups that contain real subareas get a section header; a lone top-level
-  // area (its name equals its group) is shown as a bare button.
-  const groupsWithSub = useMemo(() => {
-    const set = new Set<string>();
-    for (const a of visibleAreas) {
-      if (a.name !== a.groupName) set.add(a.groupName);
+  // Match count per area (for the left-nav badges while searching).
+  const matchCountByArea = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const a of areas) {
+      m.set(a.id, a.processes.filter((p) => processMatches(p, q)).length);
     }
-    return set;
-  }, [visibleAreas]);
+    return m;
+  }, [areas, q]);
+
+  // Global results across every area, each tagged with its area name.
+  const searchResults = useMemo<ScopedProcess[]>(() => {
+    if (!searching) return [];
+    return areas.flatMap((a) =>
+      a.processes
+        .filter((p) => processMatches(p, q))
+        .map((p) => ({ ...p, areaName: a.name })),
+    );
+  }, [areas, q, searching]);
 
   const activeArea =
-    visibleAreas.find((a) => a.id === selectedAreaId) ?? visibleAreas[0] ?? null;
+    areas.find((a) => a.id === selectedAreaId) ?? areas[0] ?? null;
+
+  const hasProcesses = totalProcesses > 0;
+  let lastGroup: string | null = null;
 
   const goToTask = useCallback(
     (task: IGRPLauncherTaskParams) => {
@@ -188,8 +217,31 @@ export function IGRPProcessLauncherMenu({
     [config, igrpToast, onProcessStarted, goToTask],
   );
 
-  const hasProcesses = areas.some((a) => a.processes.length > 0);
-  let lastGroup: string | null = null;
+  const renderProcess = (process: ScopedProcess | IGRPLauncherProcess) => {
+    const areaName = "areaName" in process ? process.areaName : null;
+    return (
+      <button
+        key={process.id}
+        type="button"
+        onClick={() => handleStart(process)}
+        className="flex items-start gap-2.5 rounded-lg p-2 text-left hover:bg-accent/60"
+      >
+        <IGRPIcon
+          iconName="Workflow"
+          className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+        />
+        <span className="grid min-w-0 gap-0.5">
+          <span className="truncate text-[13px] font-semibold leading-tight">
+            {highlight(process.name, q)}
+          </span>
+          <span className="truncate font-mono text-[11px] text-muted-foreground">
+            {process.processKey}
+            {areaName ? ` · ${areaName}` : ""}
+          </span>
+        </span>
+      </button>
+    );
+  };
 
   return (
     <>
@@ -205,122 +257,170 @@ export function IGRPProcessLauncherMenu({
           align="end"
           className="w-[min(94vw,46rem)] overflow-hidden p-0"
         >
-          {loadingList && (
-            <div className="flex items-center justify-center gap-2 py-16">
-              <IGRPLoadingSpinner />
-              <span className="text-sm text-muted-foreground">
-                A carregar processos…
-              </span>
-            </div>
-          )}
-
-          {!loadingList && !hasProcesses && (
+          {!loadingList && !hasProcesses ? (
             <div className="px-4 py-16 text-center text-sm text-muted-foreground">
               Sem processos disponíveis para iniciar.
             </div>
-          )}
-
-          {!loadingList && hasProcesses && (
-            <div className="flex h-[min(72vh,34rem)] flex-col">
+          ) : (
+            <div className="flex h-[min(72vh,25rem)] flex-col">
               {/* Search */}
               <div className="border-b p-3">
-                <label className="flex h-9 items-center gap-2 rounded-lg border px-3 text-muted-foreground focus-within:ring-2 focus-within:ring-ring">
+                <label
+                  className={cn(
+                    "flex h-9 items-center gap-2 rounded-lg border px-3 text-muted-foreground focus-within:ring-2 focus-within:ring-ring",
+                    searching && searchResults.length === 0 && "border-primary",
+                  )}
+                >
                   <IGRPIcon iconName="Search" className="size-4" />
                   <input
                     aria-label="Procurar processos"
                     placeholder="Procurar por processos…"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    // Keep typing in the input — stop Radix's menu typeahead.
                     onKeyDown={(e) => e.stopPropagation()}
                     className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none"
+                    disabled={loadingList}
                   />
                   <span className="whitespace-nowrap text-xs text-muted-foreground">
-                    {totalVisible} processo{totalVisible === 1 ? "" : "s"}
+                    {searching
+                      ? `${searchResults.length} resultado${searchResults.length === 1 ? "" : "s"}`
+                      : `${totalProcesses} processo${totalProcesses === 1 ? "" : "s"}`}
                   </span>
                 </label>
               </div>
 
               {/* Master–detail */}
-              <div className="grid min-h-0 flex-1 grid-cols-[13rem_1fr]">
+              <div className="grid min-h-0 flex-1 grid-cols-[13.75rem_1fr]">
                 {/* Areas */}
                 <nav
                   aria-label="Áreas"
                   className="grid content-start gap-px overflow-auto border-r bg-muted/30 p-2"
                 >
-                  {visibleAreas.map((area) => {
-                    const showHeader =
-                      area.groupName !== lastGroup &&
-                      groupsWithSub.has(area.groupName);
-                    lastGroup = area.groupName;
-                    const selected = activeArea?.id === area.id;
-                    return (
-                      <div key={area.id}>
-                        {showHeader && (
-                          <div className="px-2.5 pb-1 pt-2.5 font-mono text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground">
-                            {area.groupName}
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => setSelectedAreaId(area.id)}
-                          className={cn(
-                            "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-[13px] font-medium",
-                            selected
-                              ? "bg-accent text-accent-foreground"
-                              : "hover:bg-accent/50",
-                          )}
-                        >
-                          <span className="min-w-0 flex-1 truncate">
-                            {area.name}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {area.processes.length}
-                          </span>
-                        </button>
-                      </div>
-                    );
-                  })}
+                  {loadingList
+                    ? [60, 85, 70, 75, 55].map((w, i) => (
+                        <div
+                          key={i}
+                          className="mx-1.5 my-1 h-6 animate-pulse rounded-md bg-muted"
+                          style={{ width: `${w}%` }}
+                        />
+                      ))
+                    : areas.map((area) => {
+                        const showHeader =
+                          area.groupName !== lastGroup &&
+                          areas.some(
+                            (a) =>
+                              a.groupName === area.groupName &&
+                              a.name !== a.groupName,
+                          );
+                        lastGroup = area.groupName;
+                        const count = searching
+                          ? (matchCountByArea.get(area.id) ?? 0)
+                          : area.processes.length;
+                        const dimmed = searching && count === 0;
+                        const selected = !searching && activeArea?.id === area.id;
+                        return (
+                          <Fragment key={area.id}>
+                            {showHeader && (
+                              <div className="px-2.5 pb-1 pt-2.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                                {area.groupName}
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedAreaId(area.id);
+                                setQuery("");
+                              }}
+                              className={cn(
+                                "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-[13px]",
+                                selected
+                                  ? "bg-primary/10 font-semibold text-primary"
+                                  : "font-medium hover:bg-accent/60",
+                                dimmed && "opacity-45",
+                              )}
+                            >
+                              <span className="min-w-0 flex-1 truncate">
+                                {area.name}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {count}
+                              </span>
+                            </button>
+                          </Fragment>
+                        );
+                      })}
                 </nav>
 
-                {/* Processes of the selected area */}
+                {/* Detail */}
                 <div className="overflow-auto p-3">
-                  {activeArea && (
-                    <>
-                      <div className="flex items-baseline gap-2 px-1.5 pb-2">
-                        <span className="font-semibold">{activeArea.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {activeArea.groupName !== activeArea.name
-                            ? `${activeArea.groupName} · `
-                            : ""}
-                          {activeArea.processes.length} processo
-                          {activeArea.processes.length === 1 ? "" : "s"}
+                  {loadingList ? (
+                    <div className="flex h-full flex-col items-center justify-center gap-2.5 text-center">
+                      <IGRPLoadingSpinner />
+                      <span className="text-sm text-muted-foreground">
+                        A carregar processos…
+                      </span>
+                    </div>
+                  ) : searching ? (
+                    searchResults.length > 0 ? (
+                      <>
+                        <div className="flex items-baseline gap-2 px-1.5 pb-2">
+                          <span className="font-semibold">
+                            {searchResults.length} resultado
+                            {searchResults.length === 1 ? "" : "s"} para “
+                            {query.trim()}”
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            em todas as áreas
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-0.5 sm:grid-cols-2">
+                          {searchResults.map(renderProcess)}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex h-full flex-col items-center justify-center gap-2.5 px-6 text-center">
+                        <IGRPIcon
+                          iconName="SearchX"
+                          className="size-7 text-muted-foreground"
+                        />
+                        <span className="font-semibold">
+                          Nenhum processo encontrado
                         </span>
+                        <span className="max-w-xs text-xs text-muted-foreground">
+                          Não há processos desta aplicação com “{query.trim()}”.
+                          Experimente outro termo ou o código do processo (ex.
+                          P1.2.11).
+                        </span>
+                        <IGRPButton
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setQuery("")}
+                          className="mt-1"
+                        >
+                          Limpar pesquisa
+                        </IGRPButton>
                       </div>
-                      <div className="grid grid-cols-1 gap-0.5 sm:grid-cols-2">
-                        {activeArea.processes.map((process) => (
-                          <button
-                            key={process.id}
-                            type="button"
-                            onClick={() => handleStart(process)}
-                            className="flex items-start gap-2.5 rounded-lg p-2 text-left hover:bg-accent/60"
-                          >
-                            <IGRPIcon
-                              iconName="Workflow"
-                              className="mt-0.5 size-4 shrink-0 text-muted-foreground"
-                            />
-                            <span className="grid min-w-0 gap-0.5">
-                              <span className="truncate text-[13px] font-semibold leading-tight">
-                                {process.name}
-                              </span>
-                              <span className="font-mono text-[11px] text-muted-foreground">
-                                {process.processKey}
-                              </span>
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </>
+                    )
+                  ) : (
+                    activeArea && (
+                      <>
+                        <div className="flex items-baseline gap-2 px-1.5 pb-2">
+                          <span className="font-semibold">
+                            {activeArea.name}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {activeArea.groupName !== activeArea.name
+                              ? `${activeArea.groupName} · `
+                              : ""}
+                            {activeArea.processes.length} processo
+                            {activeArea.processes.length === 1 ? "" : "s"}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-0.5 sm:grid-cols-2">
+                          {activeArea.processes.map(renderProcess)}
+                        </div>
+                      </>
+                    )
                   )}
                 </div>
               </div>
