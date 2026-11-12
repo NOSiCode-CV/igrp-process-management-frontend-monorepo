@@ -300,10 +300,15 @@ export function IGRPProcessLauncherMenu({
               {/* Master–detail */}
               <div className="grid min-h-0 flex-1 grid-cols-[13.75rem_1fr]">
                 {/* Areas */}
-                <ScrollArea className="min-h-0 border-r bg-muted/30">
+                {/* [&_…viewport>div]:!w-full caps radix's `display:table;
+                    min-width:100%` content wrapper to the viewport width —
+                    without it the wrapper grows to the longest name's
+                    max-content, truncate never fires, and the right side (the
+                    count) is pushed past the edge and clipped. */}
+                <ScrollArea className="min-h-0 border-r bg-muted/30 [&_[data-slot=scroll-area-viewport]>div]:!w-full">
                   <nav
                     aria-label="Áreas"
-                    className="grid content-start gap-px p-2"
+                    className="grid grid-cols-[minmax(0,1fr)] content-start gap-px p-2"
                   >
                   {loadingList
                     ? [60, 85, 70, 75, 55].map((w, i) => (
@@ -358,7 +363,7 @@ export function IGRPProcessLauncherMenu({
                 </ScrollArea>
 
                 {/* Detail */}
-                <ScrollArea className="min-h-0">
+                <ScrollArea className="min-h-0 [&_[data-slot=scroll-area-viewport]>div]:!w-full">
                   <div className="p-3">
                   {loadingList ? (
                     <div className="flex h-full flex-col items-center justify-center gap-2.5 text-center">

@@ -361,6 +361,9 @@
   .grid-cols-\[13\.75rem_1fr\] {
     grid-template-columns: 13.75rem 1fr;
   }
+  .grid-cols-\[minmax\(0\,1fr\)\] {
+    grid-template-columns: minmax(0,1fr);
+  }
   .flex-col {
     flex-direction: column;
   }
@@ -771,6 +774,16 @@
   .dark\:text-red-400 {
     &:is(.dark *) {
       color: var(--color-red-400);
+    }
+  }
+  .\[\&_\[data-slot\=scroll-area-viewport\]\>div\]\:\!w-full {
+    & [data-slot=scroll-area-viewport]>div {
+      width: 100% !important;
+    }
+  }
+  .\[\&_…viewport\>div\]\:\!w-full {
+    & …viewport>div {
+      width: 100% !important;
     }
   }
 }
